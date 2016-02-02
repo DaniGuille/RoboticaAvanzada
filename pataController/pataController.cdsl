@@ -1,0 +1,13 @@
+import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
+
+Component pataController
+{
+	Communications
+	{
+
+		requires JointMotor;
+	};
+	language Cpp;
+	gui Qt(QWidget);
+};
+
