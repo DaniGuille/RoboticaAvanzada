@@ -7,6 +7,7 @@ Component LegControllerComp
 	{
 		requires JointMotor;
 		implements legController;
+
 	};
 	language Cpp;
 	//gui Qt(QWidget);
