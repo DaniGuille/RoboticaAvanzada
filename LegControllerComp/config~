@@ -1,0 +1,24 @@
+CommonBehavior.Endpoints=tcp -p 11000
+
+
+# Endpoints for implemented interfaces
+legController.Endpoints=tcp -p 18000
+
+
+# Proxies for required interfaces
+JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+
+
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+InnerModel=/home/ivan/robocomp/files/innermodel/hexapod1pata.xml
+m1=arm1motor1
+m2=arm1motor2
+m3=arm1motor3
+foot=axisA1T
+singleg=-1

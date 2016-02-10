@@ -33,6 +33,7 @@
 
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <stdlib.h>
 
 class SpecificWorker : public GenericWorker
 {
@@ -51,6 +52,15 @@ public slots:
 
 private:
 	
+	InnerModel *inner;
+	QStringList motores;
+	QString foot;
+	float  coxa, femur, tibia, signleg;
+	
+	
+//-----------------------Funciones------------------
+	void moverangles(QVec angles,float vel);
+	QVec movFoottoPoint(QVec p);
 };
 
 #endif
