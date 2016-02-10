@@ -9,6 +9,6 @@ Component LegControllerComp
 		implements legController;
 	};
 	language Cpp;
-	//gui Qt(QWidget);
+	gui Qt(QWidget);
 };
 

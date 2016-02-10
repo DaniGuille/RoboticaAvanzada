@@ -8,12 +8,12 @@ legController.Endpoints=tcp -p 18000
 # Proxies for required interfaces
 JointMotorProxy = jointmotor:tcp -h localhost -p 20000
 
-InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod1pata.xml
-m1=arm1motor1
-m2=arm1motor2
-m3=arm1motor3
-foot=axisA1T
-singleg= -1
+LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod1pata.xml
+LegControllerComp.m1 = arm1motor1
+LegControllerComp.m2=arm1motor2
+LegControllerComp.m3=arm1motor3
+LegControllerComp.foot=axisA1T
+LegControllerComp.singleg= -1
 
 Ice.Warn.Connections=0
 Ice.Trace.Network=0
