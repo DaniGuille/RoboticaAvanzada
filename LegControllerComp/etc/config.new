@@ -2,7 +2,7 @@ CommonBehavior.Endpoints=tcp -p 1
 
 
 # Endpoints for implemented interfaces
-legController.Endpoints=tcp -p 0
+LegController.Endpoints=tcp -p 0
 
 
 # Proxies for required interfaces

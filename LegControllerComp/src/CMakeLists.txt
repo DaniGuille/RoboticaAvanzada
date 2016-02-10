@@ -44,7 +44,7 @@ SET ( HEADERS
 
 #ROBOCOMP
 ROBOCOMP_INITIALIZE( $ENV{ROBOCOMP}/ )
-ROBOCOMP_WRAP_ICE( CommonBehavior JointMotor legController )
+ROBOCOMP_WRAP_ICE( CommonBehavior JointMotor LegController )
 SET (EXECUTABLE_OUTPUT_PATH ${RC_COMPONENT_DEVEL_PATH}/bin)
 
 # Qt4

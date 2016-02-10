@@ -18,28 +18,28 @@
  */
 #include "legcontrollerI.h"
 
-legControllerI::legControllerI(GenericWorker *_worker, QObject *parent) : QObject(parent)
+LegControllerI::LegControllerI(GenericWorker *_worker, QObject *parent) : QObject(parent)
 {
 	worker = _worker;
 	mutex = worker->mutex;       // Shared worker mutex
 }
 
 
-legControllerI::~legControllerI()
+LegControllerI::~LegControllerI()
 {
 }
 
-StateLeg legControllerI::getStateLeg(const Ice::Current&)
+StateLeg LegControllerI::getStateLeg(const Ice::Current&)
 {
 	return worker->getStateLeg();
 }
 
-void legControllerI::setIKLeg(const PoseLeg  &p, const Ice::Current&)
+void LegControllerI::setIKLeg(const PoseLeg  &p, const Ice::Current&)
 {
 	worker->setIKLeg(p);
 }
 
-void legControllerI::setFKLeg(const AnglesLeg  &al, const Ice::Current&)
+void LegControllerI::setFKLeg(const AnglesLeg  &al, const Ice::Current&)
 {
 	worker->setFKLeg(al);
 }

@@ -24,19 +24,19 @@
 
 // Ice includes
 #include <Ice/Ice.h>
-#include <legController.h>
+#include <LegController.h>
 
 #include <config.h>
 #include "genericworker.h"
 
-using namespace RoboComplegController;
+using namespace RoboCompLegController;
 
-class legControllerI : public QObject , public virtual RoboComplegController::legController
+class LegControllerI : public QObject , public virtual RoboCompLegController::LegController
 {
 Q_OBJECT
 public:
-	legControllerI( GenericWorker *_worker, QObject *parent = 0 );
-	~legControllerI();
+	LegControllerI( GenericWorker *_worker, QObject *parent = 0 );
+	~LegControllerI();
 	
 	StateLeg getStateLeg(const Ice::Current&);
 	void setIKLeg(const PoseLeg  &p, const Ice::Current&);

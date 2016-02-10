@@ -81,7 +81,7 @@
 #include <legcontrollerI.h>
 
 #include <JointMotor.h>
-#include <legController.h>
+#include <LegController.h>
 
 
 // User includes here
@@ -91,7 +91,7 @@ using namespace std;
 using namespace RoboCompCommonBehavior;
 
 using namespace RoboCompJointMotor;
-using namespace RoboComplegController;
+using namespace RoboCompLegController;
 
 
 
@@ -179,15 +179,15 @@ int ::LegControllerComp::run(int argc, char* argv[])
 
 
 		// Server adapter creation and publication
-		if (not GenericMonitor::configGetString(communicator(), prefix, "legController.Endpoints", tmp, ""))
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController.Endpoints", tmp, ""))
 		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy legController";
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegController";
 		}
-		Ice::ObjectAdapterPtr adapterlegController = communicator()->createObjectAdapterWithEndpoints("legController", tmp);
-		legControllerI *legcontroller = new legControllerI(worker);
-		adapterlegController->add(legcontroller, communicator()->stringToIdentity("legcontroller"));
-		adapterlegController->activate();
-		cout << "[" << PROGRAM_NAME << "]: legController adapter created in port " << tmp << endl;
+		Ice::ObjectAdapterPtr adapterLegController = communicator()->createObjectAdapterWithEndpoints("LegController", tmp);
+		LegControllerI *legcontroller = new LegControllerI(worker);
+		adapterLegController->add(legcontroller, communicator()->stringToIdentity("legcontroller"));
+		adapterLegController->activate();
+		cout << "[" << PROGRAM_NAME << "]: LegController adapter created in port " << tmp << endl;
 
 
 

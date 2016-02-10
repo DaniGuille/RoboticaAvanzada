@@ -27,7 +27,7 @@
 #include <ui_mainUI.h>
 
 #include <CommonBehavior.h>
-#include <legController.h>
+#include <LegController.h>
 #include <JointMotor.h>
 
 
@@ -39,7 +39,7 @@ typedef map <string,::IceProxy::Ice::Object*> MapPrx;
 
 using namespace std;
 
-using namespace RoboComplegController;
+using namespace RoboCompLegController;
 using namespace RoboCompJointMotor;
 
 
