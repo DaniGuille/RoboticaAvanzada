@@ -17,7 +17,6 @@
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "specificworker.h"
-#include </home/ivan/robocomp/components/g1/GoToPoint/src/specificworker.h>
 #include <qt4/Qt/qvarlengtharray.h>
 
 /**
@@ -40,38 +39,40 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
 	try
 	{	
-			string name = PROGRAM_NAME;
-			string s=params[name+".InnerModel"].value;
-			inner = new InnerModel(params[name+".InnerModel"].value);
-			
-			motores<<QString::fromStdString(params[name+".m1"].value)<<QString::fromStdString(params[name+".m2"].value)<<QString::fromStdString(params[name+".m3"].value);
-			foot=QString::fromStdString(params[name+".foot"].value);
-			signleg=atof(params[name+".signleg"].value.c_str());
-			QVec aux=inner->transform(motores.at(1),motores.at(0));
-			coxa=aux.norm2();
-			
-			aux=inner->transform(motores.at(2),motores.at(1));
-			femur=aux.norm2();
-			
-			aux=inner->transform(foot,motores.at(2));
-			tibia=aux.norm2();
-			
-			qDebug()<<"-----------------------------";
-			qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
-			qDebug()<<"    coxa   = "<<coxa;
-			qDebug()<<"    femur  = "<<femur;
-			qDebug()<<"    tibia  = "<<tibia;
-			qDebug()<<"    signleg = "<<signleg;
-			qDebug()<<"    foot = "<<foot;
-			qDebug()<<"    m1 = "<<motores.at(0);
-			qDebug()<<"    m2 = "<<motores.at(1);
-			qDebug()<<"    m2 = "<<motores.at(2);
-			qDebug()<<"-----------------------------";
-		}
-		catch(std::exception e)
-		{
-			qFatal("Error reading config params");
-		}
+		string name = PROGRAM_NAME;
+		string s=params[name+".InnerModel"].value;
+		inner = new InnerModel(params[name+".InnerModel"].value);
+		
+		motores<<QString::fromStdString(params[name+".m1"].value)<<QString::fromStdString(params[name+".m2"].value)<<QString::fromStdString(params[name+".m3"].value);
+		foot=QString::fromStdString(params[name+".foot"].value);
+		
+		signleg=atoi(params[name+".singleg"].value.data());
+		
+		QVec aux=inner->transform(motores.at(1),motores.at(0));
+		coxa=aux.norm2();
+		
+		aux=inner->transform(motores.at(2),motores.at(1));
+		femur=aux.norm2();
+		
+		aux=inner->transform(foot,motores.at(2));
+		tibia=aux.norm2();
+		
+		qDebug()<<"-----------------------------";
+		qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
+		qDebug()<<"    coxa   = "<<coxa;
+		qDebug()<<"    femur  = "<<femur;
+		qDebug()<<"    tibia  = "<<tibia;
+		qDebug()<<"    signleg = "<<signleg;
+		qDebug()<<"    foot = "<<foot;
+		qDebug()<<"    m1 = "<<motores.at(0);
+		qDebug()<<"    m2 = "<<motores.at(1);
+		qDebug()<<"    m2 = "<<motores.at(2);
+		qDebug()<<"-----------------------------";
+	}
+	catch(std::exception e)
+	{
+		qFatal("Error reading config params");
+	}
 			
 	timer.start(Period);
 
@@ -176,8 +177,8 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 	
 	
 	angles(0)=q1;
-	angles(1)=(q2+0.22113)*signleg;
-	angles(2)=(q3+0.578305)*signleg;
+	angles(1)=q2+0.22113;
+	angles(2)=q3+0.578305;
 	return angles;
 }
 
@@ -187,8 +188,8 @@ void SpecificWorker::moverangles(QVec angles,float vel)
 	RoboCompJointMotor::MotorGoalPositionList mg;
 	RoboCompJointMotor::MotorGoalPosition p;
 	float 	q1=angles(0),
-			q2=angles(1),
-			q3=angles(2);
+			q2=angles(1)*signleg,
+			q3=angles(2)*signleg;
 	qDebug()<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
 	MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
 	

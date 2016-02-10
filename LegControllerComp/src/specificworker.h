@@ -55,7 +55,8 @@ private:
 	InnerModel *inner;
 	QStringList motores;
 	QString foot;
-	float  coxa, femur, tibia, signleg;
+	float  coxa, femur, tibia;
+	int signleg;
 	
 	
 //-----------------------Funciones------------------
