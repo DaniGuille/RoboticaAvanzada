@@ -13,7 +13,7 @@ m1=arm1motor1
 m2=arm1motor2
 m3=arm1motor3
 foot=axisA1T
-singleg=-1
+singleg= -1
 
 Ice.Warn.Connections=0
 Ice.Trace.Network=0
