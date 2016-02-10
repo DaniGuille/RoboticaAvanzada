@@ -85,18 +85,34 @@ bool SpecificMonitor::sendParamsToWorker(RoboCompCommonBehavior::ParameterList p
 ///We need to supply a list of accepted values to each call
 void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 {
-// 	RoboCompCommonBehavior::Parameter aux;
-// 	aux.editable = true;
-// 	string name = PROGRAM_NAME;
-// 	
-// 	configGetString(name+".param_name", aux.value, "default");
-// 	//Check valid ranges
+	RoboCompCommonBehavior::Parameter aux;
+	aux.editable = true;
+	string name = PROGRAM_NAME;
+	configGetString("",name+".InnerModel", aux.value, "default");
+	params[name+".InnerModel"] = aux;
+	
+	configGetString("",name+".m1", aux.value, "default");
+	params[name+".m1"] = aux;
+	
+	configGetString("",name+".m2", aux.value, "default");
+	params[name+".m2"] = aux;
+	
+	configGetString("",name+".m3", aux.value, "default");
+	params[name+".m3"] = aux;
+	
+	configGetString("",name+".foot", aux.value, "default");
+	params[name+".foot"] = aux;
+	
+	configGetString("",name+".singleg", aux.value, "1");
+	params[name+".singleg"] = aux;
+	
+	//Check valid ranges
 // 	if( aux.value != "val1" and aux.value != "val2")
 // 	{
 // 		std::cout << __FUNCTION__ << "Warning. Wrong XXX value. Using default xxx" << std::endl;
 // 		params[name+".param_name"] = "xxx";
 // 	}
-// 	params[name+".param_name"] = aux;
+// 	params[name+".InnerModel"] = aux;
 }
 
 //comprueba que los parametros sean correctos y los transforma a la estructura del worker

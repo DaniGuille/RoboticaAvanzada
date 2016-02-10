@@ -39,13 +39,14 @@ SpecificWorker::~SpecificWorker()
 bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
 	try
-	{
-			string s=params["InnerModel"].value;
-			qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
-			inner = new InnerModel(s);
-			motores<<QString::fromStdString(params["m1"].value)<<QString::fromStdString(params["m2"].value)<<QString::fromStdString(params["m3"].value);
-			foot=QString::fromStdString(params["foot"].value);
-			signleg=atof(params["signleg"].value.c_str());
+	{	
+			string name = PROGRAM_NAME;
+			string s=params[name+".InnerModel"].value;
+			inner = new InnerModel(params[name+".InnerModel"].value);
+			
+			motores<<QString::fromStdString(params[name+".m1"].value)<<QString::fromStdString(params[name+".m2"].value)<<QString::fromStdString(params[name+".m3"].value);
+			foot=QString::fromStdString(params[name+".foot"].value);
+			signleg=atof(params[name+".signleg"].value.c_str());
 			QVec aux=inner->transform(motores.at(1),motores.at(0));
 			coxa=aux.norm2();
 			
