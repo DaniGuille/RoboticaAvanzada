@@ -1,0 +1,16 @@
+import "/robocomp/interfaces/IDSLs/legController.idsl";
+//import "/robocomp/interfaces/IDSLs/import2.idsl";
+
+Component hexapodcontroller
+{
+	Communications
+	{
+		//implements interfaceName;
+		requires legController;
+		//subscribesTo topicToSubscribeTo;
+		//publishes topicToPublish;
+	};
+	language Cpp;
+	gui Qt(QWidget);
+};
+
