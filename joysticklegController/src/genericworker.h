@@ -28,7 +28,7 @@
 
 #include <CommonBehavior.h>
 #include <JoystickAdapter.h>
-#include <JointMotor.h>
+#include <LegController.h>
 
 
 
@@ -40,7 +40,7 @@ typedef map <string,::IceProxy::Ice::Object*> MapPrx;
 using namespace std;
 
 using namespace RoboCompJoystickAdapter;
-using namespace RoboCompJointMotor;
+using namespace RoboCompLegController;
 
 
 
@@ -63,7 +63,12 @@ public:
 	QMutex *mutex;
 	
 
-	JointMotorPrx jointmotor_proxy;
+	LegControllerPrx legcontroller1_proxy;
+	LegControllerPrx legcontroller2_proxy;
+	LegControllerPrx legcontroller3_proxy;
+	LegControllerPrx legcontroller4_proxy;
+	LegControllerPrx legcontroller5_proxy;
+	LegControllerPrx legcontroller6_proxy;
 
 	virtual void sendData(const TData &data) = 0;
 

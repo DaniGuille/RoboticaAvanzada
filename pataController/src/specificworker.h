@@ -45,9 +45,25 @@ public:
 
 public slots:
 	void compute(); 	
-
+	void moverpataci();
+	void moverpatacd();
+	void xpos();
+	void xneg();
+	void ypos();
+	void yneg();
+	void zpos();
+	void zneg();
+	void actualizar();
 private:
-	
+	InnerModel *inner;
+	float  H, Coxa, Femur, Tibia, angle1, angle2;
+	QVec Posini,Posfin;
+	QVec calcular_angulos();
+	void moverpataPunto(QVec pfin);
+	void moverangles(QVec angles);
+	string m1,m2,m3;
+	QStringList motores;
+	virtual void sendData(const TData& data);
 };
 
 #endif

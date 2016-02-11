@@ -1,12 +1,11 @@
 import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
-import "/robocomp/interfaces/IDSLs/JoystickAdapter.idsl";
+
 
 Component pataController
 {
 	Communications
 	{
 		requires JointMotor;
-		subscribesTo JoystickAdapter;
 	};
 	language Cpp;
 	gui Qt(QWidget);

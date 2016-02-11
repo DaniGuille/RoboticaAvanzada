@@ -21,13 +21,27 @@
 * \brief Default constructor
 */
 GenericWorker::GenericWorker(MapPrx& mprx) :
+#ifdef USE_QTGUI
+Ui_guiDlg()
+#else
 QObject()
+#endif
+
 {
-	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
+	legcontroller1_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy1"]);
+	legcontroller2_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy2"]);
+	legcontroller3_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy3"]);
+	legcontroller4_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy4"]);
+	legcontroller5_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy5"]);
+	legcontroller6_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy6"]);
 
 
 	mutex = new QMutex(QMutex::Recursive);
 
+	#ifdef USE_QTGUI
+		setupUi(this);
+		show();
+	#endif
 	Period = BASIC_PERIOD;
 	connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
 // 	timer.start(Period);

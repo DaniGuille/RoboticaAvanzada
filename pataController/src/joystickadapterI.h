@@ -16,43 +16,37 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef JOYSTICKADAPTER_H
+#define JOYSTICKADAPTER_H
+
+// QT includes
+#include <QtCore/QObject>
+
+// Ice includes
+#include <Ice/Ice.h>
+#include <JoystickAdapter.h>
+
+#include <config.h>
 #include "genericworker.h"
-/**
-* \brief Default constructor
-*/
-GenericWorker::GenericWorker(MapPrx& mprx) :
-QObject()
+
+using namespace RoboCompJoystickAdapter;
+
+class JoystickAdapterI : public QObject , public virtual RoboCompJoystickAdapter::JoystickAdapter
 {
-	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
+Q_OBJECT
+public:
+	JoystickAdapterI( GenericWorker *_worker, QObject *parent = 0 );
+	~JoystickAdapterI();
+	
+	void sendData(const TData  &data, const Ice::Current&);
+
+	QMutex *mutex;
+private:
+
+	GenericWorker *worker;
+public slots:
 
 
-	mutex = new QMutex(QMutex::Recursive);
+};
 
-	Period = BASIC_PERIOD;
-	connect(&timer, SIGNAL(timeout()), this, SLOT(compute()));
-// 	timer.start(Period);
-}
-
-/**
-* \brief Default destructor
-*/
-GenericWorker::~GenericWorker()
-{
-
-}
-void GenericWorker::killYourSelf()
-{
-	rDebug("Killing myself");
-	emit kill();
-}
-/**
-* \brief Change compute period
-* @param per Period in ms
-*/
-void GenericWorker::setPeriod(int p)
-{
-	rDebug("Period changed"+QString::number(p));
-	Period = p;
-	timer.start(Period);
-}
-
+#endif
