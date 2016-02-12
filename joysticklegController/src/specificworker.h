@@ -43,12 +43,17 @@ public:
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
 	void sendData(const TData &data);
+	
 
 public slots:
 	void compute(); 	
 
 private:
-	
+	InnerModel *inner;
+	QString base;
+	QStringList legs;
+	QVec leg1, leg2, leg3, leg4, leg5, leg6;
+	bool IK;
 };
 
 #endif

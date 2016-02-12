@@ -1,4 +1,4 @@
-# Install script for directory: /home/robocomp/robocomp/components/RoboticaAvanzada/LegControllerComp/src
+# Install script for directory: /home/robocomp/robocomp/components/RoboticaAvanzada/joysticklegController/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,13 +34,13 @@ endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/opt/robocomp/bin/LegControllerComp")
+   "/opt/robocomp/bin/joysticklegcontroller")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/opt/robocomp/bin" TYPE FILE PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE FILES "/home/robocomp/robocomp/components/RoboticaAvanzada/LegControllerComp/bin/LegControllerComp")
+file(INSTALL DESTINATION "/opt/robocomp/bin" TYPE FILE PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE FILES "/home/robocomp/robocomp/components/RoboticaAvanzada/joysticklegController/bin/joysticklegcontroller")
 endif()
 

@@ -23,4 +23,11 @@ Ice.Trace.Protocol=0
 Ice.ACM.Client=10
 Ice.ACM.Server=10
 
-
+joysticklegcontroller.base=base
+joysticklegcontroller.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+joysticklegcontroller.nameleg1=arm1TipT
+joysticklegcontroller.nameleg2=arm2TipT
+joysticklegcontroller.nameleg3=arm3TipT
+joysticklegcontroller.nameleg4=arm4TipT
+joysticklegcontroller.nameleg5=arm5TipT
+joysticklegcontroller.nameleg6=arm6TipT
