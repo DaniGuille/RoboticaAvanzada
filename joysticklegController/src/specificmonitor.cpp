@@ -89,7 +89,9 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 	aux.editable = true;
 	string name = PROGRAM_NAME;
 	cout<<name<<endl;
-	configGetString("",name+".base", aux.value, "default");
+	configGetString("",name+".floor", aux.value, "floor");
+	params[name+".floor"] = aux;
+	configGetString("",name+".base", aux.value, "base");
 	params[name+".base"] = aux;
 	configGetString("",name+".InnerModel", aux.value, "default");
 	params[name+".InnerModel"] = aux;

@@ -62,6 +62,7 @@ public:
 
 	virtual StateLeg getStateLeg() = 0;
 	virtual void setIKLeg(const PoseLeg &p) = 0;
+	virtual void setIKBody(const PoseBody &p) = 0;
 	virtual void setFKLeg(const AnglesLeg &al) = 0;
 
 

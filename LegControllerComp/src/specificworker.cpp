@@ -17,6 +17,7 @@
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "specificworker.h"
+#include </home/ivan/robocomp/components/g1/GoToPoint/src/specificworker.h>
 #include <qt4/Qt/qvarlengtharray.h>
 
 /**
@@ -40,6 +41,9 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	try
 	{	
 		string name = PROGRAM_NAME;
+		
+		base=QString::fromStdString(params[name+".base"].value);
+		floor=QString::fromStdString(params[name+".floor"].value);
 		string s=params[name+".InnerModel"].value;
 		inner = new InnerModel(params[name+".InnerModel"].value);
 		
@@ -64,6 +68,8 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    tibia  = "<<tibia;
 		qDebug()<<"    signleg = "<<signleg;
 		qDebug()<<"    foot = "<<foot;
+		qDebug()<<"    base = "<<base;
+		qDebug()<<"    floor = "<<floor;
 		qDebug()<<"    m1 = "<<motores.at(0);
 		qDebug()<<"    m2 = "<<motores.at(1);
 		qDebug()<<"    m2 = "<<motores.at(2);
@@ -119,11 +125,11 @@ StateLeg SpecificWorker::getStateLeg()
 	s.posclavicula=aux(0);
 	s.poshombro=aux(1);
 	s.poscodo=aux(2);
-	aux=inner->transform("base",foot);
+	aux=inner->transform(base,foot);
 	s.x=aux.x();
 	s.y=aux.y();
 	s.z=aux.z();
-	s.ref="base";
+	s.ref=base.toStdString();
 	return s;
 }
 
@@ -139,6 +145,26 @@ void SpecificWorker::setIKLeg(const PoseLeg &p)
 	{
 		std::cout << ex << std::endl;
 	}
+}
+
+void SpecificWorker::setIKBody(const PoseBody &p)
+{
+	QVec pos_foot =inner->transform(floor,foot);
+	//inicio rotar el cuerpo
+	qDebug()<<"antes de rotar"<<pos_foot;
+	InnerModelNode *in= inner->getNode(base);
+	in->setRX(p.rx);
+	in->setRY(p.ry);
+	in->setRZ(p.rz);
+	//fin rotar el cuerpo
+	pos_foot=inner->transform(base,pos_foot,floor);
+	qDebug()<<"despues de rotar"<<pos_foot;
+	PoseLeg pl;
+	pl.ref=base.toStdString();
+	pl.x=pos_foot.x();
+	pl.y=pos_foot.y();
+	pl.z=pos_foot.z();
+	setIKLeg(pl);
 }
 
 void SpecificWorker::setFKLeg(const AnglesLeg &al)

@@ -45,6 +45,7 @@ public:
 
 	StateLeg getStateLeg();
 	void setIKLeg(const PoseLeg &p);
+	void setIKBody(const PoseBody &p);
 	void setFKLeg(const AnglesLeg &al);
 
 public slots:
@@ -54,7 +55,7 @@ private:
 	
 	InnerModel *inner;
 	QStringList motores;
-	QString foot;
+	QString foot,floor,base;
 	float  coxa, femur, tibia;
 	int signleg;
 	

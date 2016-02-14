@@ -53,6 +53,7 @@ private:
 	QString base;
 	QStringList legs;
 	QVec leg1, leg2, leg3, leg4, leg5, leg6;
+	int modovalue;
 	bool IK;
 	
 	

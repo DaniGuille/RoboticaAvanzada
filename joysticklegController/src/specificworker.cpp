@@ -24,6 +24,7 @@
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
 	IK=false;
+	modovalue=0;
 }
 
 /**
@@ -38,6 +39,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
 
 	string name = PROGRAM_NAME;
+	base=QString::fromStdString(params[name+".floor"].value);
 	base=QString::fromStdString(params[name+".base"].value);
 	inner = new InnerModel(params[name+".InnerModel"].value);
 	
@@ -63,16 +65,25 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 
 void SpecificWorker::compute()
 {
-	if(IK) modo->setText("IK");
-	else {
-		modo->setText("FK");
-		leg1=inner->transform(base,legs.at(0));
-		leg2=inner->transform(base,legs.at(1));
-		leg3=inner->transform(base,legs.at(2));
-		leg4=inner->transform(base,legs.at(3));
-		leg5=inner->transform(base,legs.at(4));
-		leg6=inner->transform(base,legs.at(5));
+	switch(modovalue)
+	{
+		case 0:
+			modo->setText("FK");
+			break;
+		case 1:
+			modo->setText("IK Leg");
+			break;
+		case 2:
+			modo->setText("IK Body");
+			break;
 	}
+		
+// 		leg1=inner->transform(base,legs.at(0));
+// 		leg2=inner->transform(base,legs.at(1));
+// 		leg3=inner->transform(base,legs.at(2));
+// 		leg4=inner->transform(base,legs.at(3));
+// 		leg5=inner->transform(base,legs.at(4));
+// 		leg6=inner->transform(base,legs.at(5));
 	
 // 	try
 // 	{
@@ -100,7 +111,9 @@ void SpecificWorker::sendData(const TData& data)
 	for(auto b:data.buttons)
 	{
 		if(b.clicked){
-			IK=!IK;
+			modovalue+=1;
+			if(modovalue==3)
+				modovalue=0;
 			break;
 		}
 	}
@@ -122,46 +135,70 @@ void SpecificWorker::sendData(const TData& data)
 			z=m.value/1000;
 		}
 	}
+	switch(modovalue)
+	{
+		case 0:
+			legcontroller1_proxy->setFKLeg(angles);
+			legcontroller2_proxy->setFKLeg(angles);
+			legcontroller3_proxy->setFKLeg(angles);
+			legcontroller4_proxy->setFKLeg(angles);
+			legcontroller5_proxy->setFKLeg(angles);
+			legcontroller6_proxy->setFKLeg(angles);
+			break;
+		case 1:
+			pos.x=leg1.x()+x;
+			pos.y=leg1.y()+y;
+			pos.z=leg1.z()+z;
+			legcontroller1_proxy->setIKLeg(pos);
+			
+			pos.x=leg2.x()+x;
+			pos.y=leg2.y()+y;
+			pos.z=leg2.z()+z;
+			legcontroller2_proxy->setIKLeg(pos);
+			
+			pos.x=leg3.x()+x;
+			pos.y=leg3.y()+y;
+			pos.z=leg3.z()+z;
+			legcontroller3_proxy->setIKLeg(pos);
+			
+			pos.x=leg4.x()+x;
+			pos.y=leg4.y()+y;
+			pos.z=leg4.z()+z;
+			legcontroller4_proxy->setIKLeg(pos);
+			
+			pos.x=leg5.x()+x;
+			pos.y=leg5.y()+y;
+			pos.z=leg5.z()+z;
+			legcontroller5_proxy->setIKLeg(pos);
+			
+			pos.x=leg6.x()+x;
+			pos.y=leg6.y()+y;
+			pos.z=leg6.z()+z;
+			legcontroller6_proxy->setIKLeg(pos);
+			break;
+		case 2:
+			RoboCompLegController::PoseBody pb;
+			pb.rx=x;
+			pb.ry=y;
+			pb.rz=x;
+			legcontroller1_proxy->setIKBody(pb);
+			legcontroller2_proxy->setIKBody(pb);
+			legcontroller3_proxy->setIKBody(pb);
+			legcontroller4_proxy->setIKBody(pb);
+			legcontroller5_proxy->setIKBody(pb);
+			legcontroller6_proxy->setIKBody(pb);
+			break;
+	}
+	
+	
+	
 	if(!IK)
 	{
-		legcontroller1_proxy->setFKLeg(angles);
-		legcontroller2_proxy->setFKLeg(angles);
-		legcontroller3_proxy->setFKLeg(angles);
-		legcontroller4_proxy->setFKLeg(angles);
-		legcontroller5_proxy->setFKLeg(angles);
-		legcontroller6_proxy->setFKLeg(angles);
+		
 	}
 	else
 	{
-		pos.x=leg1.x()+x;
-		pos.y=leg1.y()+y;
-		pos.z=leg1.z()+z;
-		legcontroller1_proxy->setIKLeg(pos);
 		
-		pos.x=leg2.x()+x;
-		pos.y=leg2.y()+y;
-		pos.z=leg2.z()+z;
-		legcontroller2_proxy->setIKLeg(pos);
-		
-		pos.x=leg3.x()+x;
-		pos.y=leg3.y()+y;
-		pos.z=leg3.z()+z;
-		legcontroller3_proxy->setIKLeg(pos);
-		
-		pos.x=leg4.x()+x;
-		pos.y=leg4.y()+y;
-		pos.z=leg4.z()+z;
-		legcontroller4_proxy->setIKLeg(pos);
-		
-		pos.x=leg5.x()+x;
-		pos.y=leg5.y()+y;
-		pos.z=leg5.z()+z;
-		legcontroller5_proxy->setIKLeg(pos);
-		
-		pos.x=leg6.x()+x;
-		pos.y=leg6.y()+y;
-		pos.z=leg6.z()+z;
-		legcontroller6_proxy->setIKLeg(pos);
 	}
 }
 

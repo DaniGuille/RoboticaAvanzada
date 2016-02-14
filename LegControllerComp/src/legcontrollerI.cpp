@@ -39,6 +39,11 @@ void LegControllerI::setIKLeg(const PoseLeg  &p, const Ice::Current&)
 	worker->setIKLeg(p);
 }
 
+void LegControllerI::setIKBody(const PoseBody  &p, const Ice::Current&)
+{
+	worker->setIKBody(p);
+}
+
 void LegControllerI::setFKLeg(const AnglesLeg  &al, const Ice::Current&)
 {
 	worker->setFKLeg(al);
