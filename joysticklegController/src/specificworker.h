@@ -54,6 +54,8 @@ private:
 	QStringList legs;
 	QVec leg1, leg2, leg3, leg4, leg5, leg6;
 	bool IK;
+	
+	
 };
 
 #endif

@@ -23,12 +23,6 @@
 */
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
-	leg1=inner->transform(base,legs.at(1));
-	leg2=inner->transform(base,legs.at(1));
-	leg3=inner->transform(base,legs.at(1));
-	leg4=inner->transform(base,legs.at(1));
-	leg5=inner->transform(base,legs.at(1));
-	leg6=inner->transform(base,legs.at(1));
 	IK=false;
 }
 
@@ -55,6 +49,13 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<base;
 	qDebug()<<legs;
 	qDebug()<<"-----------------------legs----------------";
+	
+	leg1=inner->transform(base,legs.at(0));
+	leg2=inner->transform(base,legs.at(1));
+	leg3=inner->transform(base,legs.at(2));
+	leg4=inner->transform(base,legs.at(3));
+	leg5=inner->transform(base,legs.at(4));
+	leg6=inner->transform(base,legs.at(5));
 	timer.start(Period);
 
 	return true;
@@ -63,7 +64,16 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 void SpecificWorker::compute()
 {
 	if(IK) modo->setText("IK");
-	else modo->setText("FK");
+	else {
+		modo->setText("FK");
+		leg1=inner->transform(base,legs.at(0));
+		leg2=inner->transform(base,legs.at(1));
+		leg3=inner->transform(base,legs.at(2));
+		leg4=inner->transform(base,legs.at(3));
+		leg5=inner->transform(base,legs.at(4));
+		leg6=inner->transform(base,legs.at(5));
+	}
+	
 // 	try
 // 	{
 // 		camera_proxy->getYImage(0,img, cState, bState);
@@ -81,11 +91,11 @@ void SpecificWorker::sendData(const TData& data)
 {
 // 	QVec angles=QVec::zeros(3);
 	RoboCompLegController::AnglesLeg angles;
+	RoboCompLegController::PoseLeg pos;
+	pos.ref=base.toStdString();
 	angles.q1=0;
 	angles.q2=0;
 	angles.q3=0;
-	RoboCompLegController::PoseLeg pos;
-	pos.ref=base.toStdString();
 	float x=0,y=0,z=0;
 	for(auto b:data.buttons)
 	{
