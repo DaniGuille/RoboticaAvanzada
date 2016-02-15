@@ -103,6 +103,7 @@ void SpecificWorker::sendData(const TData& data)
 // 	QVec angles=QVec::zeros(3);
 	RoboCompLegController::AnglesLeg angles;
 	RoboCompLegController::PoseLeg pos;
+	pos.vel=2;
 	pos.ref=base.toStdString();
 	angles.q1=0;
 	angles.q2=0;
@@ -178,9 +179,10 @@ void SpecificWorker::sendData(const TData& data)
 			break;
 		case 2:
 			RoboCompLegController::PoseBody pb;
-			pb.rx=x;
-			pb.ry=y;
-			pb.rz=x;
+			pb.vel=2;
+			pb.rx=angles.q1;
+			pb.ry=angles.q2;
+			pb.rz=angles.q3;
 			legcontroller1_proxy->setIKBody(pb);
 			legcontroller2_proxy->setIKBody(pb);
 			legcontroller3_proxy->setIKBody(pb);
@@ -188,17 +190,6 @@ void SpecificWorker::sendData(const TData& data)
 			legcontroller5_proxy->setIKBody(pb);
 			legcontroller6_proxy->setIKBody(pb);
 			break;
-	}
-	
-	
-	
-	if(!IK)
-	{
-		
-	}
-	else
-	{
-		
 	}
 }
 

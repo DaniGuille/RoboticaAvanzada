@@ -152,10 +152,12 @@ void SpecificWorker::setIKBody(const PoseBody &p)
 	QVec pos_foot =inner->transform(floor,foot);
 	//inicio rotar el cuerpo
 	qDebug()<<"antes de rotar"<<pos_foot;
-	InnerModelNode *in= inner->getNode(base);
-	in->setRX(p.rx);
-	in->setRY(p.ry);
-	in->setRZ(p.rz);
+// 	InnerModelNode *in= inner->getNode(base);
+// 	in->setRX(p.rx);
+// 	in->setRY(p.ry);
+// 	in->setRZ(p.rz);
+	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
+// 	in->save("",1);
 	//fin rotar el cuerpo
 	pos_foot=inner->transform(base,pos_foot,floor);
 	qDebug()<<"despues de rotar"<<pos_foot;
@@ -164,6 +166,7 @@ void SpecificWorker::setIKBody(const PoseBody &p)
 	pl.x=pos_foot.x();
 	pl.y=pos_foot.y();
 	pl.z=pos_foot.z();
+	pl.vel=p.vel;
 	setIKLeg(pl);
 }
 
@@ -220,19 +223,19 @@ void SpecificWorker::moverangles(QVec angles,float vel)
 	MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
 	
 	p.name=motores.at(0).toStdString();
-	p.maxSpeed=fabs(q1-m.pos);
+	p.maxSpeed=fabs(q1-m.pos)*vel;
 	p.position=q1;
 	mg.push_back(p);
 	
 	jointmotor_proxy->getMotorState(motores.at(1).toStdString());
 	p.name=motores.at(1).toStdString();
-	p.maxSpeed=fabs(q2-m.pos);
+	p.maxSpeed=fabs(q2-m.pos)*vel;
 	p.position=q2;
 	mg.push_back(p);
 	
 	jointmotor_proxy->getMotorState(motores.at(2).toStdString());
 	p.name=motores.at(2).toStdString();
-	p.maxSpeed=fabs(q3-m.pos);
+	p.maxSpeed=fabs(q3-m.pos)*vel;
 	p.position=q3;
 	mg.push_back(p);
 	jointmotor_proxy->setSyncPosition(mg);
