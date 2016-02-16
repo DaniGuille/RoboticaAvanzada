@@ -17,6 +17,7 @@
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "specificmonitor.h"
+#include <qt4/Qt/qlocale.h>
 /**
 * \brief Default constructor
 */
@@ -87,6 +88,7 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 {
 	RoboCompCommonBehavior::Parameter aux;
 	aux.editable = true;
+	bool defaulterror=false;
 	string name = PROGRAM_NAME;
 	
 	configGetString("",name+".floor", aux.value, "floor");
@@ -97,22 +99,44 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 	
 	configGetString("",name+".InnerModel", aux.value, "default");
 	params[name+".InnerModel"] = aux;
-	
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: InnerModelPath";
+		defaulterror=true;
+	}
 	configGetString("",name+".m1", aux.value, "default");
 	params[name+".m1"] = aux;
-	
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m1";
+		defaulterror=true;
+	}
 	configGetString("",name+".m2", aux.value, "default");
 	params[name+".m2"] = aux;
-	
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m2";
+		defaulterror=true;
+	}
 	configGetString("",name+".m3", aux.value, "default");
 	params[name+".m3"] = aux;
-	
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: m3";
+		defaulterror=true;
+	}
 	configGetString("",name+".foot", aux.value, "default");
 	params[name+".foot"] = aux;
-	
+	if(aux.value=="default")
+	{
+		qDebug()<<"Error de configuracion: foot";
+		defaulterror=true;
+	}
 	configGetString("",name+".singleg", aux.value, "1");
 	params[name+".singleg"] = aux;
 	
+	if(defaulterror)
+		qFatal("Modifique el archivo de configuracion");
 	//Check valid ranges
 // 	if( aux.value != "val1" and aux.value != "val2")
 // 	{

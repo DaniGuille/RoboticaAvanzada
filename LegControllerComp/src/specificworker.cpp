@@ -50,7 +50,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		motores<<QString::fromStdString(params[name+".m1"].value)<<QString::fromStdString(params[name+".m2"].value)<<QString::fromStdString(params[name+".m3"].value);
 		foot=QString::fromStdString(params[name+".foot"].value);
 		
-		signleg=atoi(params[name+".singleg"].value.data());
+		signleg=QString::fromStdString(params[name+".singleg"].value.data()).toInt();
 		
 		QVec aux=inner->transform(motores.at(1),motores.at(0));
 		coxa=aux.norm2();
@@ -74,6 +74,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    m2 = "<<motores.at(1);
 		qDebug()<<"    m2 = "<<motores.at(2);
 		qDebug()<<"-----------------------------";
+		pos_foot =inner->transform(floor,foot);
 	}
 	catch(std::exception e)
 	{
@@ -148,24 +149,17 @@ void SpecificWorker::setIKLeg(const PoseLeg &p)
 }
 
 void SpecificWorker::setIKBody(const PoseBody &p)
-{
-	QVec pos_foot =inner->transform(floor,foot);
+{	
+	
 	//inicio rotar el cuerpo
-	qDebug()<<"antes de rotar"<<pos_foot;
-// 	InnerModelNode *in= inner->getNode(base);
-// 	in->setRX(p.rx);
-// 	in->setRY(p.ry);
-// 	in->setRZ(p.rz);
 	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
-// 	in->save("",1);
 	//fin rotar el cuerpo
-	pos_foot=inner->transform(base,pos_foot,floor);
-	qDebug()<<"despues de rotar"<<pos_foot;
+	QVec pos=inner->transform(base,pos_foot,floor);
 	PoseLeg pl;
 	pl.ref=base.toStdString();
-	pl.x=pos_foot.x();
-	pl.y=pos_foot.y();
-	pl.z=pos_foot.z();
+	pl.x=pos.x();
+	pl.y=pos.y();
+	pl.z=pos.z();
 	pl.vel=p.vel;
 	setIKLeg(pl);
 }
@@ -219,7 +213,7 @@ void SpecificWorker::moverangles(QVec angles,float vel)
 	float 	q1=angles(0),
 			q2=angles(1)*signleg,
 			q3=angles(2)*signleg;
-	qDebug()<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
+	qDebug()<<"Leg: "<<foot<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
 	MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
 	
 	p.name=motores.at(0).toStdString();
