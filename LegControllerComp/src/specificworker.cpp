@@ -17,7 +17,6 @@
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "specificworker.h"
-#include </home/ivan/robocomp/components/g1/GoToPoint/src/specificworker.h>
 #include <qt4/Qt/qvarlengtharray.h>
 
 /**
