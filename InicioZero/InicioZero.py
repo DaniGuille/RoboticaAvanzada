@@ -1,0 +1,32 @@
+from pydynamixel import dynamixel
+
+# You'll need to change this to the serial port of your USB2Dynamixel
+serial_port = '/dev/ttyUSB0'
+
+# You'll need to modify these for your setup
+target_position = 512 # (range: 0 to 1023)
+
+# If this is the first time the robot was powered on,
+# you'll need to read and set the current position.
+# (See the documentation above.)
+first_move = True
+
+for i in range(18) :
+    servo_id=i
+    try:
+        ser = dynamixel.get_serial_for_url(serial_port)
+
+        if first_move == True:
+            dynamixel.init(ser, servo_id)
+
+        dynamixel.set_position(ser, servo_id, target_position)
+        dynamixel.send_action_packet(ser)
+
+        print('Success!')
+
+    except Exception as e:
+        print('Unable to move to desired position.')
+        print(e)
+
+print()
+print("Final")
