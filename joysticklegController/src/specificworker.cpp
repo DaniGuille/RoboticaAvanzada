@@ -122,7 +122,7 @@ void SpecificWorker::sendData(const TData& data)
 	{
 		if(m.name=="x")
 		{
-			angles.q1=(m.value/65537);
+			angles.q3=(m.value/65537);
 			x=m.value/1000;
 		}
 		if(m.name=="y")
@@ -132,7 +132,7 @@ void SpecificWorker::sendData(const TData& data)
 		}
 		if(m.name=="z")
 		{
-			angles.q3=(m.value/65537);
+			angles.q1=(m.value/65537);
 			z=m.value/1000;
 		}
 	}
