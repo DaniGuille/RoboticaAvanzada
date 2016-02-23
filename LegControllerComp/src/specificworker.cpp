@@ -59,7 +59,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		
 		aux=inner->transform(foot,motores.at(2));
 		tibia=aux.norm2();
-		
+		pos_foot =inner->transform(floor,foot);
 		qDebug()<<"-----------------------------";
 		qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
 		qDebug()<<"    coxa   = "<<coxa;
@@ -72,8 +72,9 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    m1 = "<<motores.at(0);
 		qDebug()<<"    m2 = "<<motores.at(1);
 		qDebug()<<"    m2 = "<<motores.at(2);
+		qDebug()<<"    posfoot = "<<pos_foot; 
 		qDebug()<<"-----------------------------";
-		pos_foot =inner->transform(floor,foot);
+// 		moverangles(QVec::vec3(0.,0.2,-0.5),1);
 	}
 	catch(std::exception e)
 	{
@@ -100,6 +101,14 @@ void SpecificWorker::compute()
 	}	
 }
 
+void SpecificWorker::setListIKLeg(const ListPoseLeg &ps)
+{
+	for(auto p:ps)
+	{
+		while(getStateLeg().ismoving){}
+		setIKLeg(p);
+	}
+}
 
 StateLeg SpecificWorker::getStateLeg()
 {
@@ -207,34 +216,37 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 
 void SpecificWorker::moverangles(QVec angles,float vel)
 {
-	RoboCompJointMotor::MotorGoalPositionList mg;
-	RoboCompJointMotor::MotorGoalPosition p;
-	float 	q1=angles(0),
-			q2=angles(1)*signleg,
-			q3=angles(2)*signleg;
-	qDebug()<<"Leg: "<<foot<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
-	MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
-	
-	p.name=motores.at(0).toStdString();
-	p.maxSpeed=fabs(q1-m.pos)*vel;
-	p.position=q1;
-	mg.push_back(p);
-	
-	jointmotor_proxy->getMotorState(motores.at(1).toStdString());
-	p.name=motores.at(1).toStdString();
-	p.maxSpeed=fabs(q2-m.pos)*vel;
-	p.position=q2;
-	mg.push_back(p);
-	
-	jointmotor_proxy->getMotorState(motores.at(2).toStdString());
-	p.name=motores.at(2).toStdString();
-	p.maxSpeed=fabs(q3-m.pos)*vel;
-	p.position=q3;
-	mg.push_back(p);
-	jointmotor_proxy->setSyncPosition(mg);
+	if(!isnan(angles(0))&&!isnan(angles(1))&&!isnan(angles(2)))
+	{
+		RoboCompJointMotor::MotorGoalPositionList mg;
+		RoboCompJointMotor::MotorGoalPosition p;
+		float 	q1=angles(0),
+				q2=angles(1)*signleg,
+				q3=angles(2)*signleg;
+		qDebug()<<"Leg: "<<foot<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
+		MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
+		
+		p.name=motores.at(0).toStdString();
+		p.maxSpeed=fabs(q1-m.pos)*vel;
+		p.position=q1;
+		mg.push_back(p);
+		
+		jointmotor_proxy->getMotorState(motores.at(1).toStdString());
+		p.name=motores.at(1).toStdString();
+		p.maxSpeed=fabs(q2-m.pos)*vel;
+		p.position=q2;
+		mg.push_back(p);
+		
+		jointmotor_proxy->getMotorState(motores.at(2).toStdString());
+		p.name=motores.at(2).toStdString();
+		p.maxSpeed=fabs(q3-m.pos)*vel;
+		p.position=q3;
+		mg.push_back(p);
+		jointmotor_proxy->setSyncPosition(mg);
+	}
+	else
+		qDebug()<< "Posicion no alcanzada";
 }
-
-
 
 
 

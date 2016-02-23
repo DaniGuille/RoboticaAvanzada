@@ -52,12 +52,30 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<legs;
 	qDebug()<<"-----------------------legs----------------";
 	
-	leg1=inner->transform(base,legs.at(0));
-	leg2=inner->transform(base,legs.at(1));
-	leg3=inner->transform(base,legs.at(2));
-	leg4=inner->transform(base,legs.at(3));
-	leg5=inner->transform(base,legs.at(4));
-	leg6=inner->transform(base,legs.at(5));
+// 	leg1=inner->transform(base,legs.at(0));
+// 	leg2=inner->transform(base,legs.at(1));
+// 	leg3=inner->transform(base,legs.at(2));
+// 	leg4=inner->transform(base,legs.at(3));
+// 	leg5=inner->transform(base,legs.at(4));
+// 	leg6=inner->transform(base,legs.at(5));
+// 	qDebug()<<leg1;
+	RoboCompLegController::StateLeg s;
+	s = legcontroller1_proxy->getStateLeg();
+	leg1=QVec::vec3(s.x,s.y,s.z);
+	s = legcontroller2_proxy->getStateLeg();
+	leg2=QVec::vec3(s.x,s.y,s.z);
+	s = legcontroller3_proxy->getStateLeg();
+	leg3=QVec::vec3(s.x,s.y,s.z);
+	s = legcontroller4_proxy->getStateLeg();
+	leg4=QVec::vec3(s.x,s.y,s.z);
+	s = legcontroller5_proxy->getStateLeg();
+	leg5=QVec::vec3(s.x,s.y,s.z);
+	s = legcontroller6_proxy->getStateLeg();
+	leg6=QVec::vec3(s.x,s.y,s.z);
+	
+	qDebug()<<leg1;
+	
+	timer.start(Period);
 	timer.start(Period);
 
 	return true;
@@ -109,15 +127,53 @@ void SpecificWorker::sendData(const TData& data)
 	angles.q2=0;
 	angles.q3=0;
 	float x=0,y=0,z=0;
-	for(auto b:data.buttons)
+	ButtonParams b=data.buttons.at(0);
+	if(b.clicked)
 	{
-		if(b.clicked){
-			modovalue+=1;
-			if(modovalue==3)
-				modovalue=0;
-			break;
-		}
+		modovalue+=1;
+		if(modovalue==3)
+			modovalue=0;
 	}
+// 	b=data.buttons.at(1);
+// 	if(b.clicked)
+// 	{
+// 		float nor=(QVec::vec3(leg1.x(),0,leg1.z()).norm2())-2;
+// // 		float z=nor*cos(leg1.ry()),x=nor*sin(leg1.ry());
+// 		QVec aux=inner->laserTo(base,base,nor,leg1.ry());
+// 		aux(1)=leg1.y();
+// 		leg1=aux;
+// 		
+// 		nor=(QVec::vec3(leg2.x(),0,leg2.z()).norm2())-2;
+// // 		float z=nor*cos(leg2.ry()),x=nor*sin(leg2.ry());
+// 		aux=inner->laserTo(base,base,nor,leg2.ry());
+// 		aux(1)=leg2.y();
+// 		leg2=aux;
+// 		
+// 		nor=(QVec::vec3(leg3.x(),0,leg3.z()).norm2())-2;
+// // 		float z=nor*cos(leg3.ry()),x=nor*sin(leg3.ry());
+// 		aux=inner->laserTo(base,base,nor,leg3.ry());
+// 		aux(1)=leg3.y();
+// 		leg3=aux;
+// 		
+// 		nor=(QVec::vec3(leg4.x(),0,leg4.z()).norm2())-2;
+// // 		float z=nor*cos(leg4.ry()),x=nor*sin(leg4.ry());
+// 		aux=inner->laserTo(base,base,nor,leg4.ry());
+// 		aux(1)=leg4.y();
+// 		leg4=aux;
+// 		
+// 		nor=(QVec::vec3(leg5.x(),0,leg5.z()).norm2())-2;
+// // 		float z=nor*cos(leg5.ry()),x=nor*sin(leg5.ry());
+// 		aux=inner->laserTo(base,base,nor,leg5.ry());
+// 		aux(1)=leg5.y();
+// 		leg5=aux;
+// 		
+// 		nor=(QVec::vec3(leg6.x(),0,leg6.z()).norm2())-2;
+// // 		float z=nor*cos(leg6.ry()),x=nor*sin(leg6.ry());
+// 		aux=inner->laserTo(base,base,nor,leg6.ry());
+// 		aux(1)=leg6.y();
+// 		leg6=aux;
+// 
+// 	}
 	for(auto m:data.axes)
 	{
 		if(m.name=="x")

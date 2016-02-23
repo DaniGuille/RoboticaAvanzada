@@ -42,6 +42,7 @@ public:
 	~SpecificWorker();
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
+	void setListIKLeg(const ListPoseLeg &ps);
 	StateLeg getStateLeg();
 	void setIKLeg(const PoseLeg &p);
 	void setIKBody(const PoseBody &p);

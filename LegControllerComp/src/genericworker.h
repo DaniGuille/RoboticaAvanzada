@@ -60,6 +60,7 @@ public:
 
 	JointMotorPrx jointmotor_proxy;
 
+	virtual void setListIKLeg(const ListPoseLeg &ps) = 0;
 	virtual StateLeg getStateLeg() = 0;
 	virtual void setIKLeg(const PoseLeg &p) = 0;
 	virtual void setIKBody(const PoseBody &p) = 0;

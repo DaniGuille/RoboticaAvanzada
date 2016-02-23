@@ -29,6 +29,11 @@ LegControllerI::~LegControllerI()
 {
 }
 
+void LegControllerI::setListIKLeg(const ListPoseLeg  &ps, const Ice::Current&)
+{
+	worker->setListIKLeg(ps);
+}
+
 StateLeg LegControllerI::getStateLeg(const Ice::Current&)
 {
 	return worker->getStateLeg();
