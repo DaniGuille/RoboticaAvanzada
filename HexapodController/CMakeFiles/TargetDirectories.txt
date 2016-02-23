@@ -1,1 +1,0 @@
-/home/salabeta/robocomp/components/RoboticaAvanzada/HexapodController/src/CMakeFiles/hexapodcontroller.dir

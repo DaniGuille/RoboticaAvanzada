@@ -87,17 +87,17 @@ void SpecificWorker::moveLegZ(float val)
 {
 	 try
   {
-	//RoboCompLegController::AnglesLeg angles = {1.0,1.0,1.0,1.0};	
-	//legcontroller_proxy->setFKLeg(angles);
-      RoboCompLegController::PoseLeg pose = {50.0, 0.0, 50.0, 1.0};
-	  legcontroller_proxy->setIKLeg(pose);
+		//RoboCompLegController::AnglesLeg angles = {1.0,1.0,1.0,1.0};	
+		//legcontroller_proxy->setFKLeg(angles);
+	  RoboCompLegController::StateLeg state = legcontroller_proxy->getStateLeg();
+	  qDebug()<<state.x<<state.y<<state.z;
+      //RoboCompLegController::PoseLeg pose = {state.x, state.y, (float)horizontalScrollBar->value(), 1.0};
+	  //legcontroller_proxy->setIKLeg(pose);
 	  
-// 	RoboCompLegController::LegController pos = 
-// 	legcontroller_proxy->setIKLeg();
   }
   catch(const Ice::Exception &e)
   {
-	std::cout << "Error reading from Camera" << e << std::endl;
+	std::cout << "Error!!!!!!!!" << e << std::endl;
   }
 	
 }
