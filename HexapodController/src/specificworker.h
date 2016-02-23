@@ -50,6 +50,7 @@ private:
   InnerModel *innerModel;
   RoboCompJointMotor::MotorParamsList motores;
   void updateMotorList();
+  RoboCompLegController::StateLeg aux;
 };
 
 #endif
