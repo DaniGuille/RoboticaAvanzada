@@ -25,6 +25,9 @@
 
 
 
+
+
+
 #ifndef SPECIFICWORKER_H
 #define SPECIFICWORKER_H
 
@@ -42,14 +45,9 @@ public:
 
 public slots:
 	void compute(); 	
-	void moveLegZ(float val);
-	void fromSliderZ(int);
 
 private:
-  
-  InnerModel *innerModel;
-  RoboCompJointMotor::MotorParamsList motores;
-  void updateMotorList();
+	
 };
 
 #endif

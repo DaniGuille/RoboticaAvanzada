@@ -28,6 +28,7 @@ QObject()
 #endif
 
 {
+	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
 	legcontroller_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy"]);
 
 

@@ -16,41 +16,52 @@
  *    You should have received a copy of the GNU General Public License
  *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "specificworker.h"
 
 /**
-       \brief
-       @author authorname
+* \brief Default constructor
 */
-
-
-
-
-#ifndef SPECIFICWORKER_H
-#define SPECIFICWORKER_H
-
-#include <genericworker.h>
-#include <innermodel/innermodel.h>
-
-class SpecificWorker : public GenericWorker
+SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
-Q_OBJECT
-public:
-	SpecificWorker(MapPrx& mprx);	
-	~SpecificWorker();
-	bool setParams(RoboCompCommonBehavior::ParameterList params);
+
+}
+
+/**
+* \brief Default destructor
+*/
+SpecificWorker::~SpecificWorker()
+{
+	
+}
+
+bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
+{
 
 
-public slots:
-	void compute(); 	
-	void moveLegZ(float val);
-	void fromSliderZ(int);
 
-private:
-  
-  InnerModel *innerModel;
-  RoboCompJointMotor::MotorParamsList motores;
-  void updateMotorList();
-};
+	
+	timer.start(Period);
 
-#endif
+	return true;
+}
+
+void SpecificWorker::compute()
+{
+// 	try
+// 	{
+// 		camera_proxy->getYImage(0,img, cState, bState);
+// 		memcpy(image_gray.data, &img[0], m_width*m_height*sizeof(uchar));
+// 		searchTags(image_gray);
+// 	}
+// 	catch(const Ice::Exception &e)
+// 	{
+// 		std::cout << "Error reading from Camera" << e << std::endl;
+// 	}
+}
+
+
+
+
+
+
 

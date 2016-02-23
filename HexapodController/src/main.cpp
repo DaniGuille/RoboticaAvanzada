@@ -80,6 +80,7 @@
 
 
 #include <LegController.h>
+#include <JointMotor.h>
 
 
 // User includes here
@@ -89,6 +90,7 @@ using namespace std;
 using namespace RoboCompCommonBehavior;
 
 using namespace RoboCompLegController;
+using namespace RoboCompJointMotor;
 
 
 
@@ -121,10 +123,28 @@ int ::hexapodcontroller::run(int argc, char* argv[])
 #endif
 	int status=EXIT_SUCCESS;
 
+	JointMotorPrx jointmotor_proxy;
 	LegControllerPrx legcontroller_proxy;
 
 	string proxy, tmp;
 	initialize();
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "JointMotorProxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy JointMotorProxy\n";
+		}
+		jointmotor_proxy = JointMotorPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("JointMotorProxy initialized Ok!");
+	mprx["JointMotorProxy"] = (::IceProxy::Ice::Object*)(&jointmotor_proxy);//Remote server proxy creation example
 
 
 	try
@@ -171,6 +191,7 @@ int ::hexapodcontroller::run(int argc, char* argv[])
 		CommonBehaviorI *commonbehaviorI = new CommonBehaviorI(monitor );
 		adapterCommonBehavior->add(commonbehaviorI, communicator()->stringToIdentity("commonbehavior"));
 		adapterCommonBehavior->activate();
+
 
 
 

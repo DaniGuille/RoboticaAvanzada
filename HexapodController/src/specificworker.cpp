@@ -23,7 +23,21 @@
 */
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
-
+   innerModel = new InnerModel("/home/robocomp/robocomp/files/innermodel/hexapod.xml");
+  
+  try
+  {
+	motores = jointmotor_proxy->getAllMotorParams();
+  }
+  catch(const Ice::Exception &ex)
+  {
+	std::cout << ex << std::endl;
+  }	
+  
+  connect(horizontalScrollBar, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)));
+  connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(fromSliderZ(int)));	
+  connect(spinBox, SIGNAL(valueChanged(int)), horizontalScrollBar, SLOT(setValue(int)));	
+  
 }
 
 /**
@@ -36,9 +50,6 @@ SpecificWorker::~SpecificWorker()
 
 bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
-
-
-
 	
 	timer.start(Period);
 
@@ -47,20 +58,56 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 
 void SpecificWorker::compute()
 {
-// 	try
-// 	{
-// 		camera_proxy->getYImage(0,img, cState, bState);
-// 		memcpy(image_gray.data, &img[0], m_width*m_height*sizeof(uchar));
-// 		searchTags(image_gray);
-// 	}
-// 	catch(const Ice::Exception &e)
-// 	{
-// 		std::cout << "Error reading from Camera" << e << std::endl;
-// 	}
+
+  updateMotorList();
+  
+  
 }
 
 
+void SpecificWorker::updateMotorList()
+{
+	
+	try
+	{
+		foreach(RoboCompJointMotor::MotorParams m, this->motores)
+		{
+			MotorState ms=jointmotor_proxy->getMotorState(m.name);
+			innerModel->updateJointValue(QString::fromStdString(m.name),ms.pos);
+		}
+	}
+	catch(const Ice::Exception &ex)
+	{
+		  std::cout << ex << std::endl;
+	}	
+	
+}
 
+void SpecificWorker::moveLegZ(float val)
+{
+	 try
+  {
+	//RoboCompLegController::AnglesLeg angles = {1.0,1.0,1.0,1.0};	
+	//legcontroller_proxy->setFKLeg(angles);
+      RoboCompLegController::PoseLeg pose = {50.0, 0.0, 50.0, 1.0};
+	  legcontroller_proxy->setIKLeg(pose);
+	  
+// 	RoboCompLegController::LegController pos = 
+// 	legcontroller_proxy->setIKLeg();
+  }
+  catch(const Ice::Exception &e)
+  {
+	std::cout << "Error reading from Camera" << e << std::endl;
+  }
+	
+}
+
+
+void SpecificWorker::fromSliderZ(int z)
+{
+	moveLegZ(z);
+	
+}
 
 
 
