@@ -24,7 +24,7 @@
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
    innerModel = new InnerModel("/home/robocomp/robocomp/files/innermodel/hexapod.xml");
-  
+   aux=legcontroller_proxy->getStateLeg();
   try
   {
 	motores = jointmotor_proxy->getAllMotorParams();
@@ -89,11 +89,17 @@ void SpecificWorker::moveLegZ(float val)
   {
 		//RoboCompLegController::AnglesLeg angles = {1.0,1.0,1.0,1.0};	
 		//legcontroller_proxy->setFKLeg(angles);
-	  RoboCompLegController::StateLeg state = legcontroller_proxy->getStateLeg();
-	  qDebug()<<state.x<<state.y<<state.z;
-      //RoboCompLegController::PoseLeg pose = {state.x, state.y, (float)horizontalScrollBar->value(), 1.0};
-	  //legcontroller_proxy->setIKLeg(pose);
+// 	  RoboCompLegController::StateLeg state = legcontroller_proxy->getStateLeg();
+// 	  string ref = state.ref;
 	  
+      RoboCompLegController::PoseLeg pose;
+	  pose.x= aux.x+20;
+	  pose.z=aux.z+(float)horizontalScrollBar->value();
+	  pose.y=aux.y;
+	  pose.vel=1.0;
+	  pose.ref=aux.ref;
+	  legcontroller_proxy->setIKLeg(pose);
+	  qDebug()<<pose.x<<pose.y<<pose.z;
   }
   catch(const Ice::Exception &e)
   {
