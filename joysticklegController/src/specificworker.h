@@ -53,9 +53,10 @@ private:
 	QString base;
 	QStringList legs;
 	QVec leg1, leg2, leg3, leg4, leg5, leg6;
+	float vel;
 	int modovalue;
 	bool IK;
-	
+	double mapear(double x, double in_min, double in_max, double out_min, double out_max);
 	
 };
 

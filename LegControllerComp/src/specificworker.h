@@ -31,8 +31,19 @@
 #ifndef SPECIFICWORKER_H
 #define SPECIFICWORKER_H
 
+// #include <kdl/chain.hpp>
+// #include <kdl/chainfksolver.hpp>
+// #include <kdl/chainfksolverpos_recursive.hpp>
+// #include <kdl/frames_io.hpp>
+// #include <kdl/chainiksolvervel_pinv.hpp>
+// #include <kdl/chainiksolverpos_nr.hpp>
+// #include <kdl/frames.hpp>
+// #include <stdio.h>
+// #include <iostream>
+
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <qt4/QtCore/QMap>
 
 class SpecificWorker : public GenericWorker
 {
@@ -56,13 +67,14 @@ private:
 	InnerModel *inner;
 	QStringList motores;
 	QString foot,floor,base;
-	float  coxa, femur, tibia;
+	double  coxa, femur, tibia;
 	QVec pos_foot;
 	int signleg;
+	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	
 	
 //-----------------------Funciones------------------
-	void moverangles(QVec angles,float vel);
+	void moverangles(QVec angles,double vel);
 	QVec movFoottoPoint(QVec p);
 };
 

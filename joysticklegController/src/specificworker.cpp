@@ -25,6 +25,7 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
 	IK=false;
 	modovalue=0;
+	vel=2;
 }
 
 /**
@@ -134,67 +135,32 @@ void SpecificWorker::sendData(const TData& data)
 		if(modovalue==3)
 			modovalue=0;
 	}
-// 	b=data.buttons.at(1);
-// 	if(b.clicked)
-// 	{
-// 		float nor=(QVec::vec3(leg1.x(),0,leg1.z()).norm2())-2;
-// // 		float z=nor*cos(leg1.ry()),x=nor*sin(leg1.ry());
-// 		QVec aux=inner->laserTo(base,base,nor,leg1.ry());
-// 		aux(1)=leg1.y();
-// 		leg1=aux;
-// 		
-// 		nor=(QVec::vec3(leg2.x(),0,leg2.z()).norm2())-2;
-// // 		float z=nor*cos(leg2.ry()),x=nor*sin(leg2.ry());
-// 		aux=inner->laserTo(base,base,nor,leg2.ry());
-// 		aux(1)=leg2.y();
-// 		leg2=aux;
-// 		
-// 		nor=(QVec::vec3(leg3.x(),0,leg3.z()).norm2())-2;
-// // 		float z=nor*cos(leg3.ry()),x=nor*sin(leg3.ry());
-// 		aux=inner->laserTo(base,base,nor,leg3.ry());
-// 		aux(1)=leg3.y();
-// 		leg3=aux;
-// 		
-// 		nor=(QVec::vec3(leg4.x(),0,leg4.z()).norm2())-2;
-// // 		float z=nor*cos(leg4.ry()),x=nor*sin(leg4.ry());
-// 		aux=inner->laserTo(base,base,nor,leg4.ry());
-// 		aux(1)=leg4.y();
-// 		leg4=aux;
-// 		
-// 		nor=(QVec::vec3(leg5.x(),0,leg5.z()).norm2())-2;
-// // 		float z=nor*cos(leg5.ry()),x=nor*sin(leg5.ry());
-// 		aux=inner->laserTo(base,base,nor,leg5.ry());
-// 		aux(1)=leg5.y();
-// 		leg5=aux;
-// 		
-// 		nor=(QVec::vec3(leg6.x(),0,leg6.z()).norm2())-2;
-// // 		float z=nor*cos(leg6.ry()),x=nor*sin(leg6.ry());
-// 		aux=inner->laserTo(base,base,nor,leg6.ry());
-// 		aux(1)=leg6.y();
-// 		leg6=aux;
-// 
-// 	}
 	for(auto m:data.axes)
 	{
 		if(m.name=="x")
 		{
 			angles.q3=(m.value/65537);
-			x=m.value/1000;
+			x=m.value/100;
 		}
 		if(m.name=="y")
 		{
 			angles.q2=(m.value/65537);
-			y=m.value/1000;
+			y=m.value/100;
 		}
 		if(m.name=="z")
 		{
 			angles.q1=(m.value/65537);
-			z=m.value/1000;
+			z=m.value/100;
+		}
+		if(m.name=="vel")
+		{
+			vel=mapear(-m.value,-65537,65537, 0.0,3.0);
 		}
 	}
 	switch(modovalue)
 	{
 		case 0:
+			angles.vel=vel;
 			legcontroller1_proxy->setFKLeg(angles);
 			legcontroller2_proxy->setFKLeg(angles);
 			legcontroller3_proxy->setFKLeg(angles);
@@ -203,6 +169,7 @@ void SpecificWorker::sendData(const TData& data)
 			legcontroller6_proxy->setFKLeg(angles);
 			break;
 		case 1:
+			pos.vel=vel;
 			pos.x=leg1.x()+x;
 			pos.y=leg1.y()+y;
 			pos.z=leg1.z()+z;
@@ -235,7 +202,7 @@ void SpecificWorker::sendData(const TData& data)
 			break;
 		case 2:
 			RoboCompLegController::PoseBody pb;
-			pb.vel=2;
+			pb.vel=vel;
 			pb.rx=angles.q1;
 			pb.ry=angles.q2;
 			pb.rz=angles.q3;
@@ -249,6 +216,10 @@ void SpecificWorker::sendData(const TData& data)
 	}
 }
 
+double SpecificWorker::mapear(double x, double in_min, double in_max, double out_min, double out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 
 
