@@ -74,17 +74,17 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    m2 = "<<motores.at(2);
 		qDebug()<<"    posfoot = "<<pos_foot; 
 		qDebug()<<"-----------------------------";
-		moverangles(QVec::vec3(0.,0.3,-0.6),1);
+// 		moverangles(QVec::vec3(0.,0.3,-0.6),1);
 // 		moverangles(QVec::vec3(0.,0.22113,0.578305),2);
 	}
 	catch(std::exception e)
 	{
 		qFatal("Error reading config params");
 	}
-	for(auto name:motores)
-		motorsparams[name.toStdString()]=jointmotor_proxy->getMotorParams(name.toStdString());
-	for(auto name:motores)
-		qDebug()<<motorsparams[name.toStdString()].offset;
+// 	for(auto name:motores)
+// 		motorsparams[name.toStdString()]=jointmotor_proxy->getMotorParams(name.toStdString());
+// 	for(auto name:motores)
+// 		qDebug()<<motorsparams[name.toStdString()].offset;
 	timer.start(Period);
 
 	return true;
@@ -198,8 +198,8 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 	QVec angles=QVec::zeros(3);
 	StateLeg s=getStateLeg();
 	double  q1=s.posclavicula,
-			q2=s.poshombro,
-			q3=s.posclavicula;
+			q2=s.poshombro*signleg,
+			q3=s.posclavicula*signleg;
 // 	double x=p.x(), y=p.y(), z=p.z();
 // 	
 // 	double q1=atan(x/z);
@@ -218,9 +218,19 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 //-------------------------------Prueba---------------------------------------------
 	double x=p.x(), y=p.y(), z=p.z(),
 		r=abs(sqrt(pow(x,2)+pow(z,2))-coxa),
-		cosq3=(pow(r,2)+pow(y,2)-pow(tibia,2)-pow(femur,2))/(2*tibia*femur),
-		senq3=-sqrt(1-pow(cosq3,2));
-	if(r<tibia+femur && r>fabs(tibia-femur)){
+		cosq3=(pow(r,2)+pow(y,2)-pow(tibia,2)-pow(femur,2))/(2*tibia*femur);
+		if(cosq3>1)
+			cosq3=1;
+		else if(cosq3<-1)
+			cosq3=-1;
+	double senq3=-sqrt(1-pow(cosq3,2));
+		if(senq3>1)
+			senq3=1;
+		else if(senq3<-1)
+			senq3=-1;
+	double L=sqrt(pow(y,2)+pow(r,2));
+	qDebug()<<L<<"    --"<<tibia+femur<<( x>0 || z>0);
+	if(L<tibia+femur &&( x>0 || z>0)){
 		if(z!=0)
 			q1=atan2(x,z);
 		else
@@ -233,6 +243,8 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 			q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
 		else
 			q2=0;
+		q2 = q2 + 0.22113;
+		q3 = q3 + 0.578305;
 	}
 	else
 		qDebug()<<"Posicion imposible";
@@ -263,8 +275,8 @@ QVec SpecificWorker::movFoottoPoint(QVec p)
 	// 1.43311   q3 =  -1.15668
 	
 	angles(0)=q1/*+motorsparams[motores.at(0).toStdString()].offset*/;
-	angles(1)=q2+0.22113/*+motorsparams[motores.at(1).toStdString()].offset*/;
-	angles(2)=q3+0.578305/*+motorsparams[motores.at(2).toStdString()].offset*/;
+	angles(1)=q2/*+motorsparams[motores.at(1).toStdString()].offset*/;
+	angles(2)=q3/*+motorsparams[motores.at(2).toStdString()].offset*/;
 	return angles;
 }
 

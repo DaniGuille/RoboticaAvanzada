@@ -6,13 +6,13 @@ LegController.Endpoints=tcp -p 18003
 
 
 # Proxies for required interfaces
-JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000
 
 LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
 LegControllerComp.m1 = arm3motor1
 LegControllerComp.m2 = arm3motor2
 LegControllerComp.m3 = arm3motor3
-LegControllerComp.foot=axisA1T
+LegControllerComp.foot=arm3TipT
 LegControllerComp.singleg= -1
 
 Ice.Warn.Connections=0

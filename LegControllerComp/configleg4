@@ -6,7 +6,7 @@ LegController.Endpoints=tcp -p 18004
 
 
 # Proxies for required interfaces
-JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+JointMotorProxy = jointmotor:tcp -h 158.49.227.216 -p 20000
 
 LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
 LegControllerComp.m1 = arm4motor1
