@@ -1,9 +1,14 @@
-CommonBehavior.Endpoints=tcp -p 11003
+CommonBehavior.Endpoints=tcp -p 11055
 
 
 # Proxies for required interfaces
-LegControllerProxy = legcontroller:tcp -h localhost -p 18001
 JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+LegController1Proxy = legcontroller:tcp -h localhost -p 18001
+LegController2Proxy = legcontroller:tcp -h localhost -p 18002
+LegController3Proxy = legcontroller:tcp -h localhost -p 18003
+LegController4Proxy = legcontroller:tcp -h localhost -p 18004
+LegController5Proxy = legcontroller:tcp -h localhost -p 18005
+LegController6Proxy = legcontroller:tcp -h localhost -p 18006
 
 
 

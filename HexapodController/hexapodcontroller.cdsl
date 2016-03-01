@@ -5,7 +5,7 @@ Component hexapodcontroller
 {
 	Communications
 	{
-		requires LegController, JointMotor;
+		requires LegController,LegController,LegController,LegController,LegController,LegController, JointMotor;
 	};
 	language Cpp;
 	gui Qt(QWidget);

@@ -64,7 +64,12 @@ public:
 	
 
 	JointMotorPrx jointmotor_proxy;
-	LegControllerPrx legcontroller_proxy;
+	LegControllerPrx legcontroller1_proxy;
+	LegControllerPrx legcontroller2_proxy;
+	LegControllerPrx legcontroller3_proxy;
+	LegControllerPrx legcontroller4_proxy;
+	LegControllerPrx legcontroller5_proxy;
+	LegControllerPrx legcontroller6_proxy;
 
 
 
