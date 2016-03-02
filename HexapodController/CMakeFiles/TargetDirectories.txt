@@ -1,0 +1,2 @@
+/home/robocomp/robocomp/components/RoboticaAvanzada/HexapodController/src/CMakeFiles/hexapodcontroller_automoc.dir
+/home/robocomp/robocomp/components/RoboticaAvanzada/HexapodController/src/CMakeFiles/hexapodcontroller.dir

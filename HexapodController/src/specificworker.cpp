@@ -24,7 +24,15 @@
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
    innerModel = new InnerModel("/home/robocomp/robocomp/files/innermodel/hexapod.xml");
-   aux=legcontroller_proxy->getStateLeg();
+   proxys[0] = legcontroller1_proxy;
+   proxys[1] = legcontroller2_proxy;
+   proxys[2] = legcontroller3_proxy;
+   proxys[3] = legcontroller4_proxy;
+   proxys[4] = legcontroller5_proxy;
+   proxys[5] = legcontroller6_proxy;
+   for(int i=0;i<6;i++){
+      posiciones[i] = proxys[i]->getStateLeg();	   
+   }
   try
   {
 	motores = jointmotor_proxy->getAllMotorParams();
@@ -34,10 +42,12 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	std::cout << ex << std::endl;
   }	
   
-  connect(horizontalScrollBar, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)));
-  connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(fromSliderZ(int)));	
-  connect(spinBox, SIGNAL(valueChanged(int)), horizontalScrollBar, SLOT(setValue(int)));	
-  
+  //connect(horizontalScrollBar, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)));
+  //connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(fromSliderZ(int)));	
+  //connect(spinBox, SIGNAL(valueChanged(int)), horizontalScrollBar, SLOT(setValue(int)));	
+  connect(legButton1, SIGNAL(clicked()), this, SLOT(moveLegZ()));
+  connect(legButton2, SIGNAL(clicked()), this, SLOT(moveLeg()));
+
 }
 
 /**
@@ -61,7 +71,6 @@ void SpecificWorker::compute()
 
   updateMotorList();
   
-  
 }
 
 
@@ -83,22 +92,23 @@ void SpecificWorker::updateMotorList()
 	
 }
 
-void SpecificWorker::moveLegZ(float val)
+void SpecificWorker::moveLegZ()
 {
 	 try
   {
 		//RoboCompLegController::AnglesLeg angles = {1.0,1.0,1.0,1.0};	
 		//legcontroller_proxy->setFKLeg(angles);
-// 	  RoboCompLegController::StateLeg state = legcontroller_proxy->getStateLeg();
-// 	  string ref = state.ref;
-	  
-      RoboCompLegController::PoseLeg pose;
-	  pose.x= aux.x+20;
-	  pose.z=aux.z+(float)horizontalScrollBar->value();
-	  pose.y=aux.y;
+		//RoboCompLegController::StateLeg state = legcontroller_proxy->getStateLeg();
+		//string ref = state.ref;
+	  float incrementoX=60.0;
+	  float incrementoY=15.0;
+
+	  pose.x=posiciones[1].x;
+	  pose.z=posiciones[1].z;
+	  pose.y=posiciones[1].y+incrementoY;
 	  pose.vel=1.0;
-	  pose.ref=aux.ref;
-	  legcontroller_proxy->setIKLeg(pose);
+	  pose.ref=posiciones[1].ref;
+	  legcontroller1_proxy->setIKLeg(pose);
 	  qDebug()<<pose.x<<pose.y<<pose.z;
   }
   catch(const Ice::Exception &e)
@@ -108,10 +118,24 @@ void SpecificWorker::moveLegZ(float val)
 	
 }
 
+void SpecificWorker::moveLeg()
+{
+	  float incrementoX=60.0;
+	  float incrementoY=30.0;
 
+	  pose.x=posiciones[1].x+incrementoX;
+	  pose.z=posiciones[1].z;
+	  pose.y=posiciones[1].y-incrementoY;
+	  pose.vel=1.0;
+	  pose.ref=posiciones[1].ref;
+	  legcontroller1_proxy->setIKLeg(pose);
+	  qDebug()<<pose.x<<pose.y<<pose.z;
+
+
+}
 void SpecificWorker::fromSliderZ(int z)
 {
-	moveLegZ(z);
+	//moveLegZ(z);
 	
 }
 
