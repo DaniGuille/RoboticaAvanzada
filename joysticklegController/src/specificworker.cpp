@@ -121,9 +121,19 @@ void SpecificWorker::sendData(const TData& data)
 {
 // 	QVec angles=QVec::zeros(3);
 	RoboCompLegController::AnglesLeg angles;
-	RoboCompLegController::PoseLeg pos;
-	pos.vel=2;
-	pos.ref=base.toStdString();
+	RoboCompLegController::PoseLeg pos1, pos2, pos3, pos4, pos5, pos6;
+	pos1.vel=2;
+	pos1.ref=base.toStdString();
+	pos2.vel=2;
+	pos2.ref=base.toStdString();
+	pos3.vel=2;
+	pos3.ref=base.toStdString();
+	pos4.vel=2;
+	pos4.ref=base.toStdString();
+	pos5.vel=2;
+	pos5.ref=base.toStdString();
+	pos6.vel=2;
+	pos6.ref=base.toStdString();
 	angles.q1=0;
 	angles.q2=0;
 	angles.q3=0;
@@ -169,36 +179,49 @@ void SpecificWorker::sendData(const TData& data)
 			legcontroller6_proxy->setFKLeg(angles);
 			break;
 		case 1:
-			pos.vel=vel;
-			pos.x=leg1.x()+x;
-			pos.y=leg1.y()+y;
-			pos.z=leg1.z()+z;
-			legcontroller1_proxy->setIKLeg(pos);
+			pos1.vel=vel;
+			pos1.x=leg1.x()+x;
+			pos1.y=leg1.y()+y;
+			pos1.z=leg1.z()+z;
 			
-			pos.x=leg2.x()+x;
-			pos.y=leg2.y()+y;
-			pos.z=leg2.z()+z;
-			legcontroller2_proxy->setIKLeg(pos);
+			pos2.vel=vel;
+			pos2.x=leg2.x()+x;
+			pos2.y=leg2.y()+y;
+			pos2.z=leg2.z()+z;
 			
-			pos.x=leg3.x()+x;
-			pos.y=leg3.y()+y;
-			pos.z=leg3.z()+z;
-			legcontroller3_proxy->setIKLeg(pos);
+			pos3.vel=vel;
+			pos3.x=leg3.x()+x;
+			pos3.y=leg3.y()+y;
+			pos3.z=leg3.z()+z;
 			
-			pos.x=leg4.x()+x;
-			pos.y=leg4.y()+y;
-			pos.z=leg4.z()+z;
-			legcontroller4_proxy->setIKLeg(pos);
+			pos4.vel=vel;
+			pos4.x=leg4.x()+x;
+			pos4.y=leg4.y()+y;
+			pos4.z=leg4.z()+z;
 			
-			pos.x=leg5.x()+x;
-			pos.y=leg5.y()+y;
-			pos.z=leg5.z()+z;
-			legcontroller5_proxy->setIKLeg(pos);
+			pos5.vel=vel;
+			pos5.x=leg5.x()+x;
+			pos5.y=leg5.y()+y;
+			pos5.z=leg5.z()+z;
 			
-			pos.x=leg6.x()+x;
-			pos.y=leg6.y()+y;
-			pos.z=leg6.z()+z;
-			legcontroller6_proxy->setIKLeg(pos);
+			pos6.vel=vel;
+			pos6.x=leg6.x()+x;
+			pos6.y=leg6.y()+y;
+			pos6.z=leg6.z()+z;
+			if(legcontroller1_proxy->setIKLeg(pos1,true))
+				if(legcontroller2_proxy->setIKLeg(pos2,true))
+					if(legcontroller3_proxy->setIKLeg(pos3,true))
+						if(legcontroller4_proxy->setIKLeg(pos4,true))
+							if(legcontroller5_proxy->setIKLeg(pos5,true))
+								if(legcontroller6_proxy->setIKLeg(pos6,true))
+								{
+									legcontroller1_proxy->setIKLeg(pos1,false);
+									legcontroller2_proxy->setIKLeg(pos2,false);
+									legcontroller3_proxy->setIKLeg(pos3,false);
+									legcontroller4_proxy->setIKLeg(pos4,false);
+									legcontroller5_proxy->setIKLeg(pos5,false);
+									legcontroller6_proxy->setIKLeg(pos6,false);
+								}
 			break;
 		case 2:
 			RoboCompLegController::PoseBody pb;
@@ -206,12 +229,20 @@ void SpecificWorker::sendData(const TData& data)
 			pb.rx=angles.q1;
 			pb.ry=angles.q2;
 			pb.rz=angles.q3;
-			legcontroller1_proxy->setIKBody(pb);
-			legcontroller2_proxy->setIKBody(pb);
-			legcontroller3_proxy->setIKBody(pb);
-			legcontroller4_proxy->setIKBody(pb);
-			legcontroller5_proxy->setIKBody(pb);
-			legcontroller6_proxy->setIKBody(pb);
+			if(legcontroller1_proxy->setIKBody(pb,true))
+				if(legcontroller2_proxy->setIKBody(pb,true))
+					if(legcontroller3_proxy->setIKBody(pb,true))
+						if(legcontroller4_proxy->setIKBody(pb,true))
+							if (legcontroller5_proxy->setIKBody(pb,true))
+								if(legcontroller6_proxy->setIKBody(pb,true))
+								{
+									legcontroller1_proxy->setIKBody(pb,false);
+									legcontroller2_proxy->setIKBody(pb,false);
+									legcontroller3_proxy->setIKBody(pb,false);
+									legcontroller4_proxy->setIKBody(pb,false);
+									legcontroller5_proxy->setIKBody(pb,false);
+									legcontroller6_proxy->setIKBody(pb,false);
+								}
 			break;
 	}
 }

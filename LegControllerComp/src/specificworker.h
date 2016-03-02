@@ -53,10 +53,10 @@ public:
 	~SpecificWorker();
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
-	void setListIKLeg(const ListPoseLeg &ps);
+	bool setListIKLeg(const ListPoseLeg &ps, const bool &simu);
 	StateLeg getStateLeg();
-	void setIKLeg(const PoseLeg &p);
-	void setIKBody(const PoseBody &p);
+	bool setIKLeg(const PoseLeg &p, const bool &simu);
+	bool setIKBody(const PoseBody &p, const bool &simu);
 	void setFKLeg(const AnglesLeg &al);
 
 public slots:
@@ -75,7 +75,7 @@ private:
 	
 //-----------------------Funciones------------------
 	void moverangles(QVec angles,double vel);
-	QVec movFoottoPoint(QVec p);
+	QVec movFoottoPoint(QVec p, bool &exito);
 };
 
 #endif

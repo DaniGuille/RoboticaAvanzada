@@ -38,10 +38,10 @@ public:
 	LegControllerI( GenericWorker *_worker, QObject *parent = 0 );
 	~LegControllerI();
 	
-	void setListIKLeg(const ListPoseLeg  &ps, const Ice::Current&);
+	bool setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&);
 	StateLeg getStateLeg(const Ice::Current&);
-	void setIKLeg(const PoseLeg  &p, const Ice::Current&);
-	void setIKBody(const PoseBody  &p, const Ice::Current&);
+	bool setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&);
+	bool setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&);
 	void setFKLeg(const AnglesLeg  &al, const Ice::Current&);
 
 	QMutex *mutex;
