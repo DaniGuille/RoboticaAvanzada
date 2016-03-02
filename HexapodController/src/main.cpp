@@ -124,7 +124,12 @@ int ::hexapodcontroller::run(int argc, char* argv[])
 	int status=EXIT_SUCCESS;
 
 	JointMotorPrx jointmotor_proxy;
-	LegControllerPrx legcontroller_proxy;
+	LegControllerPrx legcontroller1_proxy;
+	LegControllerPrx legcontroller2_proxy;
+	LegControllerPrx legcontroller3_proxy;
+	LegControllerPrx legcontroller4_proxy;
+	LegControllerPrx legcontroller5_proxy;
+	LegControllerPrx legcontroller6_proxy;
 
 	string proxy, tmp;
 	initialize();
@@ -149,19 +154,104 @@ int ::hexapodcontroller::run(int argc, char* argv[])
 
 	try
 	{
-		if (not GenericMonitor::configGetString(communicator(), prefix, "LegControllerProxy", proxy, ""))
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController1Proxy", proxy, ""))
 		{
 			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
 		}
-		legcontroller_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+		legcontroller1_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
 	}
 	catch(const Ice::Exception& ex)
 	{
 		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
 		return EXIT_FAILURE;
 	}
-	rInfo("LegControllerProxy initialized Ok!");
-	mprx["LegControllerProxy"] = (::IceProxy::Ice::Object*)(&legcontroller_proxy);//Remote server proxy creation example
+	rInfo("LegControllerProxy1 initialized Ok!");
+	mprx["LegControllerProxy1"] = (::IceProxy::Ice::Object*)(&legcontroller1_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController2Proxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
+		}
+		legcontroller2_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("LegControllerProxy2 initialized Ok!");
+	mprx["LegControllerProxy2"] = (::IceProxy::Ice::Object*)(&legcontroller2_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController3Proxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
+		}
+		legcontroller3_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("LegControllerProxy3 initialized Ok!");
+	mprx["LegControllerProxy3"] = (::IceProxy::Ice::Object*)(&legcontroller3_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController4Proxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
+		}
+		legcontroller4_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("LegControllerProxy4 initialized Ok!");
+	mprx["LegControllerProxy4"] = (::IceProxy::Ice::Object*)(&legcontroller4_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController5Proxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
+		}
+		legcontroller5_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("LegControllerProxy5 initialized Ok!");
+	mprx["LegControllerProxy5"] = (::IceProxy::Ice::Object*)(&legcontroller5_proxy);//Remote server proxy creation example
+
+
+	try
+	{
+		if (not GenericMonitor::configGetString(communicator(), prefix, "LegController6Proxy", proxy, ""))
+		{
+			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy LegControllerProxy\n";
+		}
+		legcontroller6_proxy = LegControllerPrx::uncheckedCast( communicator()->stringToProxy( proxy ) );
+	}
+	catch(const Ice::Exception& ex)
+	{
+		cout << "[" << PROGRAM_NAME << "]: Exception: " << ex;
+		return EXIT_FAILURE;
+	}
+	rInfo("LegControllerProxy6 initialized Ok!");
+	mprx["LegControllerProxy6"] = (::IceProxy::Ice::Object*)(&legcontroller6_proxy);//Remote server proxy creation example
 
 
 

@@ -42,15 +42,19 @@ public:
 
 public slots:
 	void compute(); 	
-	void moveLegZ(float val);
+	void moveLegZ();
+	void moveLeg();
 	void fromSliderZ(int);
 
 private:
-  
+  RoboCompLegController::PoseLeg pose;
   InnerModel *innerModel;
   RoboCompJointMotor::MotorParamsList motores;
   void updateMotorList();
-  RoboCompLegController::StateLeg aux;
+  LegControllerPrx proxys[6];
+  RoboCompLegController::StateLeg posiciones[6];
+  
+  
 };
 
 #endif

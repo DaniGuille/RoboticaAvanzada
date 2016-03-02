@@ -29,7 +29,12 @@ QObject()
 
 {
 	jointmotor_proxy = (*(JointMotorPrx*)mprx["JointMotorProxy"]);
-	legcontroller_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy"]);
+	legcontroller1_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy1"]);
+	legcontroller2_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy2"]);
+	legcontroller3_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy3"]);
+	legcontroller4_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy4"]);
+	legcontroller5_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy5"]);
+	legcontroller6_proxy = (*(LegControllerPrx*)mprx["LegControllerProxy6"]);
 
 
 	mutex = new QMutex(QMutex::Recursive);

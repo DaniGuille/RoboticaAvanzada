@@ -1,0 +1,16 @@
+CommonBehavior.Endpoints=tcp -p 11003
+
+
+# Proxies for required interfaces
+LegControllerProxy = legcontroller:tcp -h localhost -p 18001
+JointMotorProxy = jointmotor:tcp -h localhost -p 20000
+
+
+
+Ice.Warn.Connections=0
+Ice.Trace.Network=0
+Ice.Trace.Protocol=0
+Ice.ACM.Client=10
+Ice.ACM.Server=10
+
+
