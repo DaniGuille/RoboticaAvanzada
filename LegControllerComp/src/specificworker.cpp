@@ -219,23 +219,25 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 		senq3=-1;
 	double L=sqrt(pow(y,2)+pow(r,2));
 	if(L<tibia+femur &&( x>0 || z>0)){
-		if(z!=0)
-			q1=atan2(x,z);
-		else
-			q1=0;
-		if(cosq3!=0)
-			q3=atan2(senq3,cosq3);
-		else
-			q3=0;
-		if((femur+(tibia*cosq3))!=0)
-			q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
-		else
-			q2=0;
-		q2 = q2 + 0.22113;
-		q3 = q3 + 0.578305;
-		exito=true;
+		q1=atan2(x,z);
+		q3=atan2(senq3,cosq3);
+		q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
+// 		if(q1<motorsparams[motores.at(0).toStdString()].maxPos && q1>motorsparams[motores.at(0).toStdString()].minPos &&
+// 		   q2<motorsparams[motores.at(1).toStdString()].maxPos && q2>motorsparams[motores.at(2).toStdString()].minPos &&
+// 		   q3<motorsparams[motores.at(2).toStdString()].maxPos && q3>motorsparams[motores.at(2).toStdString()].minPos)
+// 		{
+			q2 = q2 + 0.22113;
+			q3 = q3 + 0.578305;
+			exito=true;
+// 		}
+// 		else
+// 		{
+// 			qDebug()<<"Posicion imposible";
+// 			exito=false;
+// 		}
 	}
-	else{
+	else
+	{
 		qDebug()<<"Posicion imposible";
 		exito=false;
 	}
