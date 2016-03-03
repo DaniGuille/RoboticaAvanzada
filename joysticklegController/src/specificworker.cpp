@@ -60,6 +60,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 // 	leg5=inner->transform(base,legs.at(4));
 // 	leg6=inner->transform(base,legs.at(5));
 // 	qDebug()<<leg1;
+	
 	RoboCompLegController::StateLeg s;
 	s = legcontroller1_proxy->getStateLeg();
 	leg1=QVec::vec3(s.x,s.y,s.z);
@@ -150,17 +151,17 @@ void SpecificWorker::sendData(const TData& data)
 		if(m.name=="x")
 		{
 			angles.q3=(m.value/65537);
-			x=m.value/100;
+			x=m.value/300;
 		}
 		if(m.name=="y")
 		{
 			angles.q2=(m.value/65537);
-			y=m.value/100;
+			y=m.value/300;
 		}
 		if(m.name=="z")
 		{
 			angles.q1=(m.value/65537);
-			z=m.value/100;
+			z=m.value/300;
 		}
 		if(m.name=="vel")
 		{
