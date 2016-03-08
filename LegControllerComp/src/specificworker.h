@@ -31,8 +31,19 @@
 #ifndef SPECIFICWORKER_H
 #define SPECIFICWORKER_H
 
+// #include <kdl/chain.hpp>
+// #include <kdl/chainfksolver.hpp>
+// #include <kdl/chainfksolverpos_recursive.hpp>
+// #include <kdl/frames_io.hpp>
+// #include <kdl/chainiksolvervel_pinv.hpp>
+// #include <kdl/chainiksolverpos_nr.hpp>
+// #include <kdl/frames.hpp>
+// #include <stdio.h>
+// #include <iostream>
+
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <qt4/QtCore/QMap>
 
 class SpecificWorker : public GenericWorker
 {
@@ -42,9 +53,10 @@ public:
 	~SpecificWorker();
 	bool setParams(RoboCompCommonBehavior::ParameterList params);
 
+	bool setListIKLeg(const ListPoseLeg &ps, const bool &simu);
 	StateLeg getStateLeg();
-	void setIKLeg(const PoseLeg &p);
-	void setIKBody(const PoseBody &p);
+	bool setIKLeg(const PoseLeg &p, const bool &simu);
+	bool setIKBody(const PoseBody &p, const bool &simu);
 	void setFKLeg(const AnglesLeg &al);
 
 public slots:
@@ -55,14 +67,15 @@ private:
 	InnerModel *inner;
 	QStringList motores;
 	QString foot,floor,base;
-	float  coxa, femur, tibia;
+	double  coxa, femur, tibia;
 	QVec pos_foot;
 	int signleg;
+	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	
 	
 //-----------------------Funciones------------------
-	void moverangles(QVec angles,float vel);
-	QVec movFoottoPoint(QVec p);
+	void moverangles(QVec angles,double vel);
+	QVec movFoottoPoint(QVec p, bool &exito);
 };
 
 #endif

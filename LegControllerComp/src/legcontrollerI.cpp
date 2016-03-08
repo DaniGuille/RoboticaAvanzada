@@ -29,19 +29,24 @@ LegControllerI::~LegControllerI()
 {
 }
 
+bool LegControllerI::setListIKLeg(const ListPoseLeg  &ps,  bool  simu, const Ice::Current&)
+{
+	return worker->setListIKLeg(ps, simu);
+}
+
 StateLeg LegControllerI::getStateLeg(const Ice::Current&)
 {
 	return worker->getStateLeg();
 }
 
-void LegControllerI::setIKLeg(const PoseLeg  &p, const Ice::Current&)
+bool LegControllerI::setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&)
 {
-	worker->setIKLeg(p);
+	return worker->setIKLeg(p, simu);
 }
 
-void LegControllerI::setIKBody(const PoseBody  &p, const Ice::Current&)
+bool LegControllerI::setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&)
 {
-	worker->setIKBody(p);
+	return worker->setIKBody(p, simu);
 }
 
 void LegControllerI::setFKLeg(const AnglesLeg  &al, const Ice::Current&)

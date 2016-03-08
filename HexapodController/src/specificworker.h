@@ -25,9 +25,6 @@
 
 
 
-
-
-
 #ifndef SPECIFICWORKER_H
 #define SPECIFICWORKER_H
 
@@ -44,10 +41,27 @@ public:
 
 
 public slots:
-	void compute(); 	
+	void compute(); 
+	void avanzar();	
+	void subir();
+	void bajar();
+	//void remar();
+	void fromSliderZ(int);
+	void resetPos();
 
 private:
-	
+  RoboCompLegController::PoseLeg pose;
+  InnerModel *innerModel;
+  RoboCompJointMotor::MotorParamsList motores;
+  void updateMotorList();
+  void actualizarPos();
+  LegControllerPrx proxys[6];
+  RoboCompLegController::StateLeg posiciones[6];
+  RoboCompLegController::StateLeg posIniciales[6];
+  int estado;
+  int numPata;
+  
+  
 };
 
 #endif

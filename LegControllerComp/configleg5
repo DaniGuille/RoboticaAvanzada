@@ -5,7 +5,7 @@ CommonBehavior.Endpoints=tcp -p 11005
 LegController.Endpoints=tcp -p 18005
 
 
-# Proxies for required interfaces
+# Proxies for required interfaces158.49.227.216
 JointMotorProxy = jointmotor:tcp -h localhost -p 20000
 
 LegControllerComp.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
