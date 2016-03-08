@@ -11,22 +11,21 @@ target_position = 512 # (range: 0 to 1023)
 # (See the documentation above.)
 first_move = True
 
-for i in range(17) :
-    servo_id=i+1
-    try:
-        ser = dynamixel.get_serial_for_url(serial_port)
+ser = dynamixel.get_serial_for_url(serial_port, baudrate=1000000)
 
-        if first_move == True:
-            dynamixel.init(ser, servo_id)
+for i in range(1,19):
+  dynamixel.init(ser, i)
 
-        dynamixel.set_position(ser, servo_id, target_position)
-        dynamixel.send_action_packet(ser)
+for i in range(5,6):
+  try:
+    p = dynamixel.get_position(ser, i, num_error_attempts=10)
+    print "motor", i, "pos" ,p
+    dynamixel.set_position(ser, i, 512)
+    dynamixel.send_action_packet(ser)
+    #print('Success!')
 
-        print('Success!')
+  except Exception as e:
+     #print('Unable to move to desired position.')
+     #print(e)
+     pass
 
-    except Exception as e:
-        print('Unable to move to desired position.')
-        print(e)
-
-print()
-print("Final")
