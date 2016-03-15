@@ -96,7 +96,8 @@ class SpecificWorker(GenericWorker):
 			state.pos=(state.pos) * (2.618 + 2.618) / 1023
 			
 			state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
-			#print state.isMoving
+			
+			print state.isMoving
 			##print state.pos
 			self.motorStateMap[m.name] = state
 	#

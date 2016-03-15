@@ -1,0 +1,12 @@
+import "/robocomp/interfaces/IDSLs/JointMotor.idsl";
+
+Component hexacontroller
+{
+	Communications
+	{
+		requires JointMotor;
+	};
+	language Python;
+	gui Qt(QWidget);
+};
+
