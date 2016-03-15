@@ -58,7 +58,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Pata 1</string>
+    <string>Avanzar</string>
    </property>
   </widget>
   <widget class="QPushButton" name="legButton2">
@@ -71,7 +71,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Avanzar</string>
+    <string>Rotar</string>
    </property>
    <property name="checkable">
     <bool>true</bool>

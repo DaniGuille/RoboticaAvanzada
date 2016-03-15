@@ -41,11 +41,12 @@ public:
 
 
 public slots:
-	void compute(); 
+	void compute();
+	void rotar();
 	void avanzar();	
 	void subir();
 	void bajar();
-	//void remar();
+	void remar();
 	void fromSliderZ(int);
 	void resetPos();
 
