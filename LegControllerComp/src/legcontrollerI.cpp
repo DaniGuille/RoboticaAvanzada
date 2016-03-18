@@ -49,9 +49,9 @@ bool LegControllerI::setIKBody(const PoseBody  &p,  bool  simu, const Ice::Curre
 	return worker->setIKBody(p, simu);
 }
 
-void LegControllerI::setFKLeg(const AnglesLeg  &al, const Ice::Current&)
+bool LegControllerI::setFKLeg(const AnglesLeg  &al,  bool  simu, const Ice::Current&)
 {
-	worker->setFKLeg(al);
+	return worker->setFKLeg(al, simu);
 }
 
 

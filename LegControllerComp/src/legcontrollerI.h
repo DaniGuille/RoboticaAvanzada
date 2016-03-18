@@ -42,7 +42,7 @@ public:
 	StateLeg getStateLeg(const Ice::Current&);
 	bool setIKLeg(const PoseLeg  &p,  bool  simu, const Ice::Current&);
 	bool setIKBody(const PoseBody  &p,  bool  simu, const Ice::Current&);
-	void setFKLeg(const AnglesLeg  &al, const Ice::Current&);
+	bool setFKLeg(const AnglesLeg  &al,  bool  simu, const Ice::Current&);
 
 	QMutex *mutex;
 private:

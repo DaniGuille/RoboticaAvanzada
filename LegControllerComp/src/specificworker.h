@@ -57,7 +57,7 @@ public:
 	StateLeg getStateLeg();
 	bool setIKLeg(const PoseLeg &p, const bool &simu);
 	bool setIKBody(const PoseBody &p, const bool &simu);
-	void setFKLeg(const AnglesLeg &al);
+	bool setFKLeg(const AnglesLeg &al, const bool &simu);
 
 public slots:
 	void compute(); 	
@@ -70,6 +70,7 @@ private:
 	double  coxa, femur, tibia;
 	QVec pos_foot;
 	int signleg;
+	RoboCompJointMotor::MotorStateMap statemap;
 	QMap<string,RoboCompJointMotor::MotorParams> motorsparams;
 	
 	
