@@ -32,8 +32,10 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
    proxys[5] = legcontroller6_proxy;
    estado=0;
    numPata=0;
+   //RoboCompLegController::AnglesLeg anglesInit = {0.0,0.3,-0.6,0.5};	
    for(int i=0;i<6;i++){
-      posIniciales[i] = proxys[i]->getStateLeg();	   
+      posIniciales[i] = proxys[i]->getStateLeg();	
+	  //proxys[i]->setFKLeg(anglesInit);	//Mover fkLeg 0.0, 0.3, -0.6
    }
    	  qDebug()<<"POSICIONES INICIALES: "<<posIniciales[0].x<<posIniciales[0].y<<posIniciales[0].z;
 
@@ -46,11 +48,8 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	std::cout << ex << std::endl;
   }	
   
-  //connect(horizontalScrollBar, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)));
-  //connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(fromSliderZ(int)));	
-  //connect(spinBox, SIGNAL(valueChanged(int)), horizontalScrollBar, SLOT(setValue(int)));	
-  connect(legButton1, SIGNAL(clicked()), this, SLOT(subir()));
-  connect(legButton2, SIGNAL(clicked()), this, SLOT(avanzar()));
+  connect(legButton1, SIGNAL(clicked()), this, SLOT(avanzar()));
+  connect(legButton2, SIGNAL(clicked()), this, SLOT(rotar()));
   connect(resetButton, SIGNAL(clicked()), this, SLOT(resetPos()));
 
 
@@ -76,7 +75,7 @@ void SpecificWorker::compute()
 {
   updateMotorList();
   if(legButton2->isChecked()){
-	avanzar();  
+	rotar();  
   }
   
 }
@@ -108,6 +107,25 @@ void SpecificWorker::actualizarPos(){
 
 void SpecificWorker::avanzar()
 {
+		switch(estado)
+	{
+		//Sube
+		case 0:
+			subir();
+			break;
+		//Avanza y baja
+		case 1:
+			bajar();
+			break;
+		case 2:
+			legButton1->setCheckable(false);
+			//remar();
+			break;
+	}
+}	
+
+void SpecificWorker::rotar()
+{
 	
 	switch(estado)
 	{
@@ -120,8 +138,8 @@ void SpecificWorker::avanzar()
 			bajar();
 			break;
 		case 2:
-			legButton2->setCheckable(false);
-			//remar();
+			//legButton2->setCheckable(false);
+			remar();
 			break;
 	}
 	
@@ -148,12 +166,14 @@ void SpecificWorker::subir()
 	 try
   {
 	  float valor=0.7;
-	  RoboCompLegController::AnglesLeg angles = {0.0,valor,0.0,0.5};	
+	  RoboCompLegController::AnglesLeg angles = {0.0,valor,0.0,2.0};	
 	  proxys[numPata]->setFKLeg(angles);
       while(true){
 		  actualizarPos();
 		  qDebug()<<posiciones[numPata].poshombro;
-		if(-valor==posiciones[numPata].poshombro){
+		if(numPata%2 == 0)
+			valor=-valor;
+		if(valor==posiciones[numPata].poshombro){
 			estado=1;
 			break;
 	  }
@@ -176,18 +196,22 @@ void SpecificWorker::subir()
   }
 	
 }
-
+/* ROTANDO
 void SpecificWorker::bajar()
 {
 	 try
   {
-	  float valor=0.7;
-	  RoboCompLegController::AnglesLeg angles = {valor,-valor,0.0,0.5};	
+	  float valor1=0.7;
+	   float valor2=0.7;
+	  RoboCompLegController::AnglesLeg angles = {valor1,-valor2,0.0,2.0};	
 	  proxys[numPata]->setFKLeg(angles);
       while(true){
 		actualizarPos();
-		qDebug()<<posiciones[numPata].poshombro<<posiciones[numPata].posclavicula;
-		if(valor==posiciones[numPata].poshombro && valor==posiciones[numPata].posclavicula){
+		//qDebug()<<posiciones[numPata].poshombro<<posiciones[numPata].posclavicula;
+		
+		if(numPata%2 != 0)
+			valor1=-valor1;
+		if(valor1==posiciones[numPata].poshombro && valor2==posiciones[numPata].posclavicula){
 			numPata++;
 			if(numPata==6){
 				numPata=0;
@@ -195,6 +219,135 @@ void SpecificWorker::bajar()
 			}else{
 				estado=0;
 			}
+			break;
+	  }
+	  
+  }
+  }
+  catch(const Ice::Exception &e)
+  {
+	std::cout << "Error!!!!!!!!" << e << std::endl;
+  }
+	
+}
+*/
+
+/* DE LADO
+void SpecificWorker::bajar()
+{
+	 try
+  {
+	  float y=-0.7;
+	  float z=0.7;
+	  if(numPata%2 != 0){
+		  z=-z;
+	  }
+	  RoboCompLegController::AnglesLeg angles = {0.0,y,z,2.0};	
+	  proxys[numPata]->setFKLeg(angles);
+      while(true){
+		actualizarPos();
+		
+		if(numPata%2 != 0){
+			y=-y;
+			z=-z;
+		}
+		qDebug()<<"Z: "<<z<<" Poshombro: "<<posiciones[numPata].poshombro<<" Y: "<<-y<< "PosCodo: "<<posiciones[numPata].poscodo;
+
+		if(z==posiciones[numPata].poshombro && y==posiciones[numPata].poscodo){
+			numPata++;
+			if(numPata==6){
+				numPata=0;
+				estado=2;
+			}else{
+				estado=0;
+			}
+			break;
+	  }
+	  
+  }
+  }
+  catch(const Ice::Exception &e)
+  {
+	std::cout << "Error!!!!!!!!" << e << std::endl;
+  }
+	
+}*/
+/*DE LADO PRIMERO LAS DE LA DERECHA*/
+void SpecificWorker::bajar()
+{
+	 try
+  {
+	  float y=-0.7;
+	  float z=0.7;
+	  if(numPata%2 != 0){
+		  z=-z;
+	  }
+	  RoboCompLegController::AnglesLeg angles = {0.0,y,z,2.0};	
+	  proxys[numPata]->setFKLeg(angles);
+      while(true){
+		actualizarPos();
+		if(numPata%2 != 0){
+			y=-y;
+			z=-z;
+		}
+		qDebug()<<"Z: "<<z<<" Poshombro: "<<posiciones[numPata].poshombro<<" Y: "<<-y<< "PosCodo: "<<posiciones[numPata].poscodo;
+
+		if(z==posiciones[numPata].poshombro && y==posiciones[numPata].poscodo){
+			numPata=numPata+2;
+			if(numPata==6){
+				numPata=1;
+				estado=0;
+			}else if(numPata>6){
+				numPata=0;
+				estado=0;
+			}
+			if(numPata==7){
+				numPata=0;
+				estado=2;
+			}else{
+			    estado=0;
+			}
+			break;
+	  }
+	  
+  }
+  }
+  catch(const Ice::Exception &e)
+  {
+	std::cout << "Error!!!!!!!!" << e << std::endl;
+  }
+	
+}
+
+void SpecificWorker::remar()
+{
+		 try
+  {
+	  float y=-0.7;
+	  float z=0.7;
+	  if(numPata%2 != 0){
+		  z=-z;
+	  }
+	  RoboCompLegController::AnglesLeg angles = {0.0,y,z,2.0};	
+	  proxys[numPata]->setFKLeg(angles);
+      while(true){
+		actualizarPos();
+		if(numPata%2 != 0){
+			y=-y;
+			z=-z;
+		}
+		qDebug()<<"Z: "<<z<<" Poshombro: "<<posiciones[numPata].poshombro<<" Y: "<<-y<< "PosCodo: "<<posiciones[numPata].poscodo;
+
+		if(z==posiciones[numPata].poshombro && y==posiciones[numPata].poscodo){
+			numPata=numPata+2;
+			if(numPata==6){
+				numPata=1;
+				estado=0;
+			}else if(numPata>6){
+				numPata=0;
+				estado=0;
+			}
+			estado=0;
 			break;
 	  }
 	  
