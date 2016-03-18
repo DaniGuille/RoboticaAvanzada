@@ -204,30 +204,6 @@ JointMotor.cpp.s:
 	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/JointMotor.cpp.s
 .PHONY : JointMotor.cpp.s
 
-JoystickAdapter.o: JoystickAdapter.cpp.o
-.PHONY : JoystickAdapter.o
-
-# target to build an object file
-JoystickAdapter.cpp.o:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/JoystickAdapter.cpp.o
-.PHONY : JoystickAdapter.cpp.o
-
-JoystickAdapter.i: JoystickAdapter.cpp.i
-.PHONY : JoystickAdapter.i
-
-# target to preprocess a source file
-JoystickAdapter.cpp.i:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/JoystickAdapter.cpp.i
-.PHONY : JoystickAdapter.cpp.i
-
-JoystickAdapter.s: JoystickAdapter.cpp.s
-.PHONY : JoystickAdapter.s
-
-# target to generate assembly for a file
-JoystickAdapter.cpp.s:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/JoystickAdapter.cpp.s
-.PHONY : JoystickAdapter.cpp.s
-
 commonbehaviorI.o: commonbehaviorI.cpp.o
 .PHONY : commonbehaviorI.o
 
@@ -348,30 +324,6 @@ home/ivan/robocomp/classes/rapplication/rapplication.cpp.s:
 	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/home/ivan/robocomp/classes/rapplication/rapplication.cpp.s
 .PHONY : home/ivan/robocomp/classes/rapplication/rapplication.cpp.s
 
-joystickadapterI.o: joystickadapterI.cpp.o
-.PHONY : joystickadapterI.o
-
-# target to build an object file
-joystickadapterI.cpp.o:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/joystickadapterI.cpp.o
-.PHONY : joystickadapterI.cpp.o
-
-joystickadapterI.i: joystickadapterI.cpp.i
-.PHONY : joystickadapterI.i
-
-# target to preprocess a source file
-joystickadapterI.cpp.i:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/joystickadapterI.cpp.i
-.PHONY : joystickadapterI.cpp.i
-
-joystickadapterI.s: joystickadapterI.cpp.s
-.PHONY : joystickadapterI.s
-
-# target to generate assembly for a file
-joystickadapterI.cpp.s:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/joystickadapterI.cpp.s
-.PHONY : joystickadapterI.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -467,30 +419,6 @@ moc_genericworker.s: moc_genericworker.cxx.s
 moc_genericworker.cxx.s:
 	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/moc_genericworker.cxx.s
 .PHONY : moc_genericworker.cxx.s
-
-moc_joystickadapterI.o: moc_joystickadapterI.cxx.o
-.PHONY : moc_joystickadapterI.o
-
-# target to build an object file
-moc_joystickadapterI.cxx.o:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/moc_joystickadapterI.cxx.o
-.PHONY : moc_joystickadapterI.cxx.o
-
-moc_joystickadapterI.i: moc_joystickadapterI.cxx.i
-.PHONY : moc_joystickadapterI.i
-
-# target to preprocess a source file
-moc_joystickadapterI.cxx.i:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/moc_joystickadapterI.cxx.i
-.PHONY : moc_joystickadapterI.cxx.i
-
-moc_joystickadapterI.s: moc_joystickadapterI.cxx.s
-.PHONY : moc_joystickadapterI.s
-
-# target to generate assembly for a file
-moc_joystickadapterI.cxx.s:
-	cd /home/ivan/robocomp/components/RoboticaAvanzada/pataController && $(MAKE) -f src/CMakeFiles/pataController.dir/build.make src/CMakeFiles/pataController.dir/moc_joystickadapterI.cxx.s
-.PHONY : moc_joystickadapterI.cxx.s
 
 moc_specificmonitor.o: moc_specificmonitor.cxx.o
 .PHONY : moc_specificmonitor.o
@@ -607,9 +535,6 @@ help:
 	@echo "... JointMotor.o"
 	@echo "... JointMotor.i"
 	@echo "... JointMotor.s"
-	@echo "... JoystickAdapter.o"
-	@echo "... JoystickAdapter.i"
-	@echo "... JoystickAdapter.s"
 	@echo "... commonbehaviorI.o"
 	@echo "... commonbehaviorI.i"
 	@echo "... commonbehaviorI.s"
@@ -625,9 +550,6 @@ help:
 	@echo "... home/ivan/robocomp/classes/rapplication/rapplication.o"
 	@echo "... home/ivan/robocomp/classes/rapplication/rapplication.i"
 	@echo "... home/ivan/robocomp/classes/rapplication/rapplication.s"
-	@echo "... joystickadapterI.o"
-	@echo "... joystickadapterI.i"
-	@echo "... joystickadapterI.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
@@ -640,9 +562,6 @@ help:
 	@echo "... moc_genericworker.o"
 	@echo "... moc_genericworker.i"
 	@echo "... moc_genericworker.s"
-	@echo "... moc_joystickadapterI.o"
-	@echo "... moc_joystickadapterI.i"
-	@echo "... moc_joystickadapterI.s"
 	@echo "... moc_specificmonitor.o"
 	@echo "... moc_specificmonitor.i"
 	@echo "... moc_specificmonitor.s"

@@ -118,22 +118,22 @@ void SpecificWorker::compute()
 		  std::cout << ex << std::endl;
 	}	
 }
-void SpecificWorker::sendData(const TData& data)
-{
-	QVec angles=QVec::zeros(3);
-	
-	for(auto m:data.axes)
-	{
-		if(m.name=="x")
-			angles(0)=(m.value/65537);
-		if(m.name=="y")
-			angles(1)=(m.value/65537);
-		if(m.name=="z")
-			angles(2)=(m.value/65537);
-	}
-	
-	moverangles(angles);
-}
+// void SpecificWorker::sendData(const TData& data)
+// {
+// 	QVec angles=QVec::zeros(3);
+// 	
+// 	for(auto m:data.axes)
+// 	{
+// 		if(m.name=="x")
+// 			angles(0)=(m.value/65537);
+// 		if(m.name=="y")
+// 			angles(1)=(m.value/65537);
+// 		if(m.name=="z")
+// 			angles(2)=(m.value/65537);
+// 	}
+// 	
+// 	moverangles(angles);
+// }
 
 void SpecificWorker::moverpatacd()
 {
@@ -199,8 +199,8 @@ void SpecificWorker::moverpataPunto(QVec pfin)
 	
 	
 	angles(0)=q1;
-	angles(1)=q2+0.22113;
-	angles(2)=q3+0.578305;
+	angles(1)=q2+0.22113-0.5;
+	angles(2)=q3+0.578305+0.8;
 	
 	moverangles(angles);
 }

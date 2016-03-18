@@ -256,7 +256,7 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 // 		{
 		q2 += 0.22113;
 		q3 += 0.578305;
-		double max=M_PI/2, min=- M_PI/2;
+		double max=M_PI/2+0.15, min=- M_PI/2-0.15;
 		if((min<q1&&q1<max)&&(min<q2&&q2<max)&&(min<q3&&q3<max)){
 			exito=true;
 		}
