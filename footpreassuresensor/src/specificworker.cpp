@@ -1,0 +1,88 @@
+/*
+ *    Copyright (C) 2016 by YOUR NAME HERE
+ *
+ *    This file is part of RoboComp
+ *
+ *    RoboComp is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    RoboComp is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "specificworker.h"
+
+/**
+* \brief Default constructor
+*/
+SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
+{
+
+	serial.setBaudRate(serial.BaudRateType::BAUD9600);
+	serial.open();
+	if(serial.isOpen()){
+		printf("¡¡EL PUERTO YA ESTA ABIERTO!!");
+	}
+}
+
+/**
+* \brief Default destructor
+*/
+SpecificWorker::~SpecificWorker()
+{
+	
+}
+
+bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
+{
+	timer.start(500);
+	return true;
+}
+
+void SpecificWorker::compute()
+{
+	char buff[100];// = "p1 1 p2 2 p3 3 p4 4 p5 5 p6 6";
+	int nb = serial.readLine(buff, 100);
+	if(nb > 50)
+	{
+		QString b(buff);	
+		QStringList ls = b.split(" ");
+		QMutexLocker ml(mutex);
+		this->buffer.clear();
+		for(int i=0; i< ls.size(); i+=2)
+			this->buffer[ls[i].toStdString()] = ls[i+1].toInt();
+	 }
+	 else
+		qDebug() << __FUNCTION__ << "Error reading serial port. Only " << nb << "bytes read";
+	
+// 	 for (auto& x: this->buffer) 
+// 		std::cout << x.first << ": " << x.second << '\n';
+}
+
+
+Buffer SpecificWorker::readSensors()
+{
+	QMutexLocker ml(mutex);
+	return buffer;
+}
+
+int SpecificWorker::readSensor(const string &name)
+{
+	QMutexLocker ml(mutex);
+	if(buffer.count(name) == 1)
+		return buffer[name];	
+	return -1;
+
+}
+
+
+
+
+
+
