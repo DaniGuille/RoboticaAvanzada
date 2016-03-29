@@ -27,7 +27,6 @@
 #include <ui_mainUI.h>
 
 #include <CommonBehavior.h>
-#include <JoystickAdapter.h>
 #include <JointMotor.h>
 
 
@@ -39,7 +38,6 @@ typedef map <string,::IceProxy::Ice::Object*> MapPrx;
 
 using namespace std;
 
-using namespace RoboCompJoystickAdapter;
 using namespace RoboCompJointMotor;
 
 
@@ -65,7 +63,6 @@ public:
 
 	JointMotorPrx jointmotor_proxy;
 
-	virtual void sendData(const TData &data) = 0;
 
 
 protected:

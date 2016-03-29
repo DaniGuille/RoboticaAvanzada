@@ -63,7 +63,7 @@ private:
 	void moverangles(QVec angles);
 	string m1,m2,m3;
 	QStringList motores;
-	virtual void sendData(const TData& data);
+// 	virtual void sendData(const TData& data);
 };
 
 #endif

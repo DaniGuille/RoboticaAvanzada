@@ -78,10 +78,8 @@
 #include "specificmonitor.h"
 #include "commonbehaviorI.h"
 
-#include <joystickadapterI.h>
 
 #include <JointMotor.h>
-#include <JoystickAdapter.h>
 
 
 // User includes here
@@ -91,7 +89,6 @@ using namespace std;
 using namespace RoboCompCommonBehavior;
 
 using namespace RoboCompJointMotor;
-using namespace RoboCompJoystickAdapter;
 
 
 
@@ -146,7 +143,6 @@ int ::pataController::run(int argc, char* argv[])
 	rInfo("JointMotorProxy initialized Ok!");
 	mprx["JointMotorProxy"] = (::IceProxy::Ice::Object*)(&jointmotor_proxy);//Remote server proxy creation example
 
-	IceStorm::TopicManagerPrx topicManager = IceStorm::TopicManagerPrx::checkedCast(communicator()->propertyToProxy("TopicManager.Proxy"));
 
 
 	SpecificWorker *worker = new SpecificWorker(mprx);
@@ -181,34 +177,6 @@ int ::pataController::run(int argc, char* argv[])
 
 
 
-
-		// Server adapter creation and publication
-		if (not GenericMonitor::configGetString(communicator(), prefix, "JoystickAdapterTopic.Endpoints", tmp, ""))
-		{
-			cout << "[" << PROGRAM_NAME << "]: Can't read configuration for proxy JoystickAdapterProxy";
-		}
-		Ice::ObjectAdapterPtr JoystickAdapter_adapter = communicator()->createObjectAdapterWithEndpoints("joystickadapter", tmp);
-		JoystickAdapterPtr joystickadapterI_ = new JoystickAdapterI(worker);
-		Ice::ObjectPrx joystickadapter = JoystickAdapter_adapter->addWithUUID(joystickadapterI_)->ice_oneway();
-		IceStorm::TopicPrx joystickadapter_topic;
-		if(!joystickadapter_topic){
-		try {
-			joystickadapter_topic = topicManager->create("JoystickAdapter");
-		}
-		catch (const IceStorm::TopicExists&) {
-		//Another client created the topic
-		try{
-			joystickadapter_topic = topicManager->retrieve("JoystickAdapter");
-		}
-		catch(const IceStorm::NoSuchTopic&)
-		{
-			//Error. Topic does not exist
-			}
-		}
-		IceStorm::QoS qos;
-		joystickadapter_topic->subscribeAndGetPublisher(qos, joystickadapter);
-		}
-		JoystickAdapter_adapter->activate();
 
 		// Server adapter creation and publication
 		cout << SERVER_FULL_NAME " started" << endl;

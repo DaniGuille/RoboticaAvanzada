@@ -18,6 +18,7 @@
  */
 #include "specificworker.h"
 #include <qt4/Qt/qvarlengtharray.h>
+#include <qt4/Qt/qdebug.h>
 
 /**
 * \brief Default constructor
@@ -74,17 +75,26 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    m2 = "<<motores.at(2);
 		qDebug()<<"    posfoot = "<<pos_foot; 
 		qDebug()<<"-----------------------------";
-		moverangles(QVec::vec3(0.,0.3,-0.6),1);
-// 		moverangles(QVec::vec3(0.,0.22113,0.578305),2);
 	}
 	catch(std::exception e)
 	{
 		qFatal("Error reading config params");
 	}
+	try{
+		moverangles(QVec::vec3(0.,0.35,-0.7),1);
+	}
+	catch(std::exception e)
+	{
+	    qDebug()<<"no he llegado";
+	}
 	for(auto name:motores)
-		motorsparams[name.toStdString()]=jointmotor_proxy->getMotorParams(name.toStdString());
+	{
+		motorsparams[name.toStdString()]=jointmotor2_proxy->getMotorParams(name.toStdString());
+// 		statemap.insert(std::pair<string,RoboCompJointMotor::MotorState>(name.toStdString()));
+	}
 	for(auto name:motores)
 		qDebug()<<motorsparams[name.toStdString()].offset;
+	
 	timer.start(Period);
 
 	return true;
@@ -95,8 +105,8 @@ void SpecificWorker::compute()
 	try{
 		foreach(QString m, motores)
 		{
-			MotorState ms=jointmotor_proxy->getMotorState(m.toStdString());
-			inner->updateJointValue(m,ms.pos);
+			statemap[m.toStdString()]=jointmotor2_proxy->getMotorState(m.toStdString());//robot
+			inner->updateJointValue(m,statemap[m.toStdString()].pos);
 		}
 	}
 	catch(const Ice::Exception &ex)
@@ -121,6 +131,7 @@ bool SpecificWorker::setListIKLeg(const ListPoseLeg &ps, const bool &simu)
 StateLeg SpecificWorker::getStateLeg()
 {
 	StateLeg s;
+	s.ismoving=false;
 	QVec aux=QVec::zeros(3);
 	int i=0;
 	MotorState ms;
@@ -128,7 +139,7 @@ StateLeg SpecificWorker::getStateLeg()
 	{
 		try
 		{
-			ms=jointmotor_proxy->getMotorState(m.toStdString());
+			ms=jointmotor2_proxy->getMotorState(m.toStdString());
 			if(ms.isMoving)
 				s.ismoving=true;
 			aux(i)=ms.pos;
@@ -136,12 +147,15 @@ StateLeg SpecificWorker::getStateLeg()
 		catch(const Ice::Exception &ex)
 		{
 			std::cout << ex << std::endl;
+			RoboCompLegController::HardwareFailedException e;
+			e.what="Hardware Failed" +m.toStdString();
+			//send e
 		}
 		i++;
 	}
-	s.posclavicula=aux(0);
-	s.poshombro=aux(1);
-	s.poscodo=aux(2);
+	s.q1=aux(0);
+	s.q2=aux(1);
+	s.q3=aux(2);
 	aux=inner->transform(base,foot);
 	s.x=aux.x();
 	s.y=aux.y();
@@ -152,21 +166,29 @@ StateLeg SpecificWorker::getStateLeg()
 
 bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 {
+	bool exito;
 	try
 	{
-		bool exito;
 		QVec posfoot=inner->transform(motores.at(0),QVec::vec3(p.x,p.y,p.z),QString::fromStdString(p.ref));
 		qDebug()<<p.x<<p.y<<p.z;
 		QVec angles=movFoottoPoint(posfoot, exito);
-		qDebug()<<exito<<"--------------------------------------------------";
 		if(!simu&&exito)
 			moverangles(angles, p.vel);
+		if(!exito)
+		{
+			RoboCompLegController::ImpossiblePositionException e;
+			e.what="Impossible Position";
+			//send e
+		}
 		return exito;
 	}
 	catch(const Ice::Exception &ex)
 	{
 		std::cout << ex << std::endl;
-		return false;
+		RoboCompLegController::HardwareFailedException e;
+		e.what="Hardware Failed";
+		//send e
+		return exito;
 	}
 }
 
@@ -185,28 +207,34 @@ bool SpecificWorker::setIKBody(const PoseBody &p, const bool &simu)
 	return setIKLeg(pl,simu);
 }
 
-void SpecificWorker::setFKLeg(const AnglesLeg &al)
+bool SpecificWorker::setFKLeg(const AnglesLeg &al, const bool &simu)
 {	
+	bool exito=false;
 	try
 	{
-	QVec angles=QVec::vec3(al.q1,al.q2,al.q3);
-	moverangles(angles, al.vel);
+		QVec angles=QVec::vec3(al.q1,al.q2,al.q3);
+		double max=M_PI/2, min=- M_PI/2;
+		if((min<al.q1&&al.q1<max)&&(min<al.q2&&al.q2<max)&&(min<al.q3&&al.q3<max))
+			exito=true;
+		if(exito&&!simu)
+			moverangles(angles, al.vel);
+		return exito;
 	}
 	catch(const Ice::Exception &ex)
 	{
 		std::cout << ex << std::endl;
+		RoboCompLegController::HardwareFailedException e;
+		e.what="Hardware Failed";
+		//send e
+		return exito;
 	}
 }
 
 QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 {
 	QVec angles=QVec::zeros(3);
-	StateLeg s=getStateLeg();
-	double  q1=s.posclavicula,
-			q2=s.poshombro*signleg,
-			q3=s.posclavicula*signleg;
 
-	double x=p.x(), y=p.y(), z=p.z(),
+	double q1, q2, q3,x=p.x(), y=p.y(), z=p.z(),
 		r=abs(sqrt(pow(x,2)+pow(z,2))-coxa),
 		cosq3=(pow(r,2)+pow(y,2)-pow(tibia,2)-pow(femur,2))/(2*tibia*femur);
 	if(cosq3>1)
@@ -219,7 +247,7 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 	else if(senq3<-1)
 		senq3=-1;
 	double L=sqrt(pow(y,2)+pow(r,2));
-	if(L<tibia+femur &&( x>0 || z>0)){
+	if(L<tibia+femur /*&&( x>0 || z>0)*/){
 		q1=atan2(x,z);
 		q3=atan2(senq3,cosq3);
 		q2=atan2(y,r)-atan2((tibia*senq3),(femur+(tibia*cosq3)));
@@ -227,46 +255,25 @@ QVec SpecificWorker::movFoottoPoint(QVec p, bool &exito)
 // 		   q2<motorsparams[motores.at(1).toStdString()].maxPos && q2>motorsparams[motores.at(2).toStdString()].minPos &&
 // 		   q3<motorsparams[motores.at(2).toStdString()].maxPos && q3>motorsparams[motores.at(2).toStdString()].minPos)
 // 		{
-			q2 = q2 + 0.22113;
-			q3 = q3 + 0.578305;
+		q2 += 0.22113;
+		q3 += 0.578305;
+		double max=M_PI/2+0.15, min=- M_PI/2-0.15;
+		if((min<q1&&q1<max)&&(min<q2&&q2<max)&&(min<q3&&q3<max)){
 			exito=true;
-// 		}
-// 		else
-// 		{
-// 			qDebug()<<"Posicion imposible";
-// 			exito=false;
-// 		}
+		}
+		else
+		{
+			qDebug()<<"Imposible llegar: angulos sobrepasados.";
+			exito=false;
+		}
 	}
 	else
 	{
-		qDebug()<<"Posicion imposible";
+		qDebug()<<"Imposible llegar: punto demasiado lejano.";
 		exito=false;
 	}
 	
-//----------------------------------------------------------------------------
-	/*
-	KDL::Chain chain;
-															 //a        alfa          d      theta
-	chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotY),KDL::Frame(KDL::Vector(0.0,0.0,1))));
-	chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotX),KDL::Frame(KDL::Vector(0.0,0.0,1))));
-	chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotX),KDL::Frame(KDL::Vector(0.0,0.0,1))));
-
-	KDL::ChainFkSolverPos_recursive fksolver(chain);//objeto para calcular la cinemática directa del robot
-	KDL::ChainIkSolverVel_pinv iksolver1v(chain);//objeto para calcular la cinemática inversa
-	KDL::ChainIkSolverPos_NR iksolver1(chain,fksolver,iksolver1v,100,1e-6);//como máximo 100 iteraciones, parar si el error es menor que 1e-6
-	
-	KDL::JntArray q(chain.getNrOfJoints());
-	KDL::JntArray q_init(chain.getNrOfJoints());	
-	
-	KDL::Frame F_dest;
-	F_dest.p= KDL::Vector(p.x(),p.y(),p.z());
-	F_dest.M= KDL::Rotation(1,0,0,
-					   0,1,0,
-					   0,0,1);
-	
-	int ret = iksolver1.CartToJnt(q_init,F_dest,q);*/
-		
-	angles(0)=q1/*+motorsparams[motores.at(0).toStdString()].offset*/;
+	angles(0)=q1+statemap[motores.at(0).toStdString()].pos/*+motorsparams[motores.at(0).toStdString()].offset*/;
 	angles(1)=q2/*+motorsparams[motores.at(1).toStdString()].offset*/;
 	angles(2)=q3/*+motorsparams[motores.at(2).toStdString()].offset*/;
 	return angles;
@@ -284,29 +291,28 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 				q2=angles(1) *signleg,
 				q3=angles(2) *signleg;
 		qDebug()<<"Leg: "<<foot<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
-		MotorState m=jointmotor_proxy->getMotorState(motores.at(0).toStdString());
+		MotorState m=jointmotor2_proxy->getMotorState(motores.at(0).toStdString());
 		v.name = p.name = motores.at(0).toStdString();
 		v.velocity = p.maxSpeed=fabs(q1-m.pos)*vel;
 		p.position=q1;
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor_proxy->getMotorState(motores.at(1).toStdString());
+		m=jointmotor2_proxy->getMotorState(motores.at(1).toStdString());
 		v.name = p.name=motores.at(1).toStdString();
 		v.velocity = p.maxSpeed=fabs(q2-m.pos)*vel;
 		p.position=q2;
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor_proxy->getMotorState(motores.at(2).toStdString());
+		m=jointmotor2_proxy->getMotorState(motores.at(2).toStdString());
 		v.name = p.name=motores.at(2).toStdString();
 		v.velocity = p.maxSpeed=fabs(q3-m.pos)*vel;
 		p.position=q3;
 		mg.push_back(p);
 		mv.push_back(v);
 		
-// 		jointmotor_proxy->setSyncVelocity(mv);
-		jointmotor_proxy->setSyncPosition(mg);
+		jointmotor2_proxy->setSyncPosition(mg);
 	}
 	else
 		qDebug()<< "Posicion no alcanzada";
