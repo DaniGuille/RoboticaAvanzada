@@ -24,7 +24,8 @@
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
 
-	serial.setBaudRate(serial.BaudRateType::BAUD9600);
+	serial.setBaudRate(serial.BaudRateType::BAUD115200);
+	serial.setName("/dev/ttyACM1");
 	serial.open();
 	if(serial.isOpen()){
 		printf("¡¡EL PUERTO YA ESTA ABIERTO!!");
@@ -41,15 +42,18 @@ SpecificWorker::~SpecificWorker()
 
 bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 {
-	timer.start(500);
+	timer.start(100);
 	return true;
 }
 
 void SpecificWorker::compute()
 {
-	char buff[100];// = "p1 1 p2 2 p3 3 p4 4 p5 5 p6 6";
-	int nb = serial.readLine(buff, 100);
-	if(nb > 50)
+	timer.start(100);
+	char buff[96];// = "p1 1 p2 2 p3 3 p4 4 p5 5 p6 6";
+	int nb = serial.readLine(buff, 96);
+	qDebug() << buff;
+
+	if(nb > 35)
 	{
 		QString b(buff);	
 		QStringList ls = b.split(" ");
@@ -57,13 +61,18 @@ void SpecificWorker::compute()
 		this->buffer.clear();
 		for(int i=0; i< ls.size(); i+=2)
 			this->buffer[ls[i].toStdString()] = ls[i+1].toInt();
+			cout << buff;
 	 }
 	 else
 		qDebug() << __FUNCTION__ << "Error reading serial port. Only " << nb << "bytes read";
 	
-// 	 for (auto& x: this->buffer) 
-// 		std::cout << x.first << ": " << x.second << '\n';
+	 for (auto& x: this->buffer) 
+		std::cout << x.first << ": " << x.second << '\n';
 }
+
+//////////////////////////////////////////////
+///
+////////////////////////
 
 
 Buffer SpecificWorker::readSensors()
@@ -76,9 +85,8 @@ int SpecificWorker::readSensor(const string &name)
 {
 	QMutexLocker ml(mutex);
 	if(buffer.count(name) == 1)
-		return buffer[name];	
+		return buffer[name];			
 	return -1;
-
 }
 
 

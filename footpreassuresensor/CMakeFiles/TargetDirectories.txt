@@ -1,0 +1,2 @@
+/home/salabeta/robocomp/components/RoboticaAvanzada/footpreassuresensor/src/CMakeFiles/FootPreassureSensor.dir
+/home/salabeta/robocomp/components/RoboticaAvanzada/footpreassuresensor/src/CMakeFiles/FootPreassureSensor_automoc.dir
