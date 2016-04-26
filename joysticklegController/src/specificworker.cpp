@@ -18,12 +18,13 @@
  */
 #include "specificworker.h"
 #include <qt4/Qt/qlocale.h>
-
+#define tbezier 0.1
 /**
 * \brief Default constructor
 */
 SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
+	syn=0;
 	IK=false;
 	modovalue=0;
 	vel=2;
@@ -43,6 +44,10 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	l2[0]=1;
 	l2[1]=2;
 	l2[2]=5;
+	
+	//Innerviewer
+	osgView = new OsgView(this->frame);
+	show();
 }
 
 /**
@@ -61,6 +66,10 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	base=QString::fromStdString(params[name+".base"].value);
 	inner = new InnerModel(params[name+".InnerModel"].value);
 	
+	
+	innerViewer = new InnerModelViewer(inner, "root", osgView->getRootGroup(), false);
+
+	
 	for(int i=1;i<=6;i++)
 	{
 		legs<<QString::fromStdString(params[name+".nameleg"+to_string(i)].value);
@@ -70,25 +79,21 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	qDebug()<<legs;
 	qDebug()<<"-----------------------legs----------------";
 	
-// 	leg1=inner->transform(base,legs.at(0));
-// 	leg2=inner->transform(base,legs.at(1));
-// 	leg3=inner->transform(base,legs.at(2));
-// 	leg4=inner->transform(base,legs.at(3));
-// 	leg5=inner->transform(base,legs.at(4));
-// 	leg6=inner->transform(base,legs.at(5));
-// 	qDebug()<<leg1;
-	
 	for(int i=0;i<6;i++){
 		statelegs[i] = proxies[i]->getStateLeg();
 		legsp[i]=QVec::vec3(statelegs[i].x,statelegs[i].y,statelegs[i].z);
 	}
-	timer.start(Period);
-	timer.start(Period);
+	for(auto p:legsp)
+		qDebug()<<p;
+	
+	timer.start(10);
+	
 	return true;
 }
 
 void SpecificWorker::compute()
 {
+	syn+=3;
 	switch(modovalue)
 	{
 		case -1:
@@ -107,8 +112,6 @@ void SpecificWorker::compute()
 			modo->setText("Caminar3x3");
 			if(caminar3x3())
 			{
-				for(int i=0;i<6;i++)
-					statelegs[i] = proxies[i]->getStateLeg();
 				lini=QVec::vec3(-X,0,-Z);
 				lfin=QVec::vec3(X,0,Z);
 			}
@@ -117,12 +120,22 @@ void SpecificWorker::compute()
 			modo->setText("Rotar");
 			if(rotar())
 			{
-				for(int i=0;i<6;i++)
-					statelegs[i] = proxies[i]->getStateLeg();
 				lrot=QVec::vec3(0,0,Y);
 			}
 			break;
 	}
+	for(int i=0;i<6;i++)
+		statelegs[i] = proxies[i]->getStateLeg();
+	for(int i=0;i<6;i++)
+	{
+		RoboCompLegController::StateLeg s=statelegs[i];
+		inner->updateJointValue(QString::fromStdString(s.q1.name),s.q1.pos);
+		inner->updateJointValue(QString::fromStdString(s.q2.name),s.q2.pos);
+		inner->updateJointValue(QString::fromStdString(s.q3.name),s.q3.pos);
+	}
+	innerViewer->update();
+	osgView->autoResize();
+	osgView->frame();
 }
 
 void SpecificWorker::caminarDespacio()
@@ -144,7 +157,7 @@ void SpecificWorker::caminarDespacio()
 			p.vel=6;
 			proxies[j]->setIKLeg(p,false);
 			i+=.1;
-			qDebug()<<i;
+// 			qDebug()<<i;
 		}
 		else
 		{
@@ -173,7 +186,7 @@ void SpecificWorker::caminarDespacio()
 			proxies[k]->setIKLeg(p,false);
 		}
 		i+=.1;
-		qDebug()<<i;
+// 		qDebug()<<i;
 		if (i>1)
 		{
 			i=0;
@@ -182,6 +195,7 @@ void SpecificWorker::caminarDespacio()
 	}
 	
 }
+
 bool SpecificWorker::caminar3x3()
 {
 	static float i=0;
@@ -227,7 +241,7 @@ bool SpecificWorker::caminar3x3()
 				proxies[l2[s]]->setIKLeg(p,false);
 				
 			}
-			i+=.1;
+			i+=tbezier;
 			if (i>1)
 			{
 				int aux[]={l1[0],l1[1],l1[2]};
@@ -311,7 +325,7 @@ bool SpecificWorker::rotar()
 				proxies[l2[s]]->setIKLeg(p,false);
 				
 			}
-			i+=.1;
+			i+=tbezier;
 			if (i>1)
 			{
 				
@@ -331,12 +345,14 @@ bool SpecificWorker::rotar()
 	else
 		return true;
 }
+
 void SpecificWorker::sendData(const TData& data)
 {
 // 	QVec angles=QVec::zeros(3);
 	bool simufallida=true;
 	RoboCompLegController::AnglesLeg angles;
 	RoboCompLegController::PoseLeg pos[6];
+	QVec posdfoot;
 	for (int i=0;i<6;i++)
 	{
 		pos[i].vel=2;
@@ -407,9 +423,14 @@ void SpecificWorker::sendData(const TData& data)
 					pos[i].x=legsp[i].x()+x;
 					pos[i].y=legsp[i].y()+y;
 					pos[i].z=legsp[i].z()+z;
+					
 				}
+// 				posdfoot=inner->transform(QString::fromStdString("Arm1Motor1T"),QVec::vec3(pos[1].x,pos[1].y,pos[1].z),base);
+// 				qDebug()<<"Arm1Motor1T  "<<posdfoot;
 				for(int i=0;i<6;i++)
-				{
+				{	
+					RoboCompLegController::PoseLeg p= pos[i];
+					qDebug()<<"---------------------"<<p.x<<p.y<<p.z;
 					if(!proxies[i]->setIKLeg(pos[i],true))
 					{
 						simufallida=false;
@@ -435,7 +456,6 @@ void SpecificWorker::sendData(const TData& data)
 						break;
 					}
 				}
-				
 				if(simufallida)
 					for(int i=0;i<6;i++)
 						proxies[i]->setIKBody(pb,false);
@@ -447,19 +467,6 @@ void SpecificWorker::sendData(const TData& data)
 		}
 	}
 }
-
-void SpecificWorker::colocar_patas()
-{
-	RoboCompLegController::AnglesLeg angles;
-	angles.q1=0;
-	angles.q2=0.3;
-	angles.q3=-0.6;
-	angles.vel=1;
-	for(int i=0;i<6;i++)
-		proxies[1]->setFKLeg(angles, false);
-} 
-
-
 
 void SpecificWorker::uphexapod()
 {
@@ -494,8 +501,8 @@ void SpecificWorker::uphexapod()
 				p.vel=6;
 				proxies[s]->setIKLeg(p,false);
 			}
-			qDebug()<<i;
-			i+=0.1;
+// 			qDebug()<<i;
+			i+=tbezier;
 		}
 		else
 		{
@@ -518,8 +525,8 @@ void SpecificWorker::uphexapod()
 				p.vel=6;
 				proxies[s]->setIKLeg(p,false);
 			}
-			qDebug()<<i;
-			i+=0.1;
+// 			qDebug()<<i;
+			i+=tbezier;
 		}
 	}
 	if(i>1)
@@ -535,8 +542,6 @@ void SpecificWorker::uphexapod()
 	}
 }
 
-
-
 QVec SpecificWorker::bezier2(QVec p0, QVec p1, float t)
 {
 	QVec diff = p1 - p0;
@@ -549,12 +554,8 @@ QVec SpecificWorker::bezier3(QVec p0, QVec p1, QVec p2, float t)
 	QVec b=bezier2(p1,p2,t);
 	return bezier2(a,b,t);
 }
+
 double SpecificWorker::mapear(double x, double in_min, double in_max, double out_min, double out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-
-
-
-
-

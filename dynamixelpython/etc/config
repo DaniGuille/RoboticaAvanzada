@@ -4,7 +4,7 @@ JointMotor.Endpoints=tcp -p 20000
 DynamixelComp.Endpoints=tcp -p 10067
 CommonBehavior.Endpoints=tcp -p 11067
 
-Dynamixel.Device=/dev/ttyUSB1
+Dynamixel.Device=/dev/ttyUSB0
 Dynamixel.BaudRate=1000000
 Dynamixel.BasicPeriod=50
 Dynamixel.SDK=true

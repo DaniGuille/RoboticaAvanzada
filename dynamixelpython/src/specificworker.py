@@ -45,7 +45,7 @@ class SpecificWorker(GenericWorker):
 	
 	motorParams = []
 	motorStateMap = {}
-	serial_port = '/dev/ttyUSB1'
+	serial_port = '/dev/ttyUSB0'
 
 	
 	def __init__(self, proxy_map):
@@ -91,15 +91,17 @@ class SpecificWorker(GenericWorker):
 		#print 'SpecificWorker.compute...'
 		
 		for m in self.motorParams:
-			state = MotorState()
-			state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
-			state.pos=(state.pos) * (2.618 + 2.618) / 1023
-			
-			state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
-			
-			print state.isMoving
-			##print state.pos
-			self.motorStateMap[m.name] = state
+			try:
+				state = MotorState()
+				state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
+				state.pos=(state.pos) * (2.618 + 2.618) / 1023
+				state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
+				print state.isMoving
+				##print state.pos
+				self.motorStateMap[m.name] = state
+			except Exception, e:
+				traceback.print_exc()
+				print e
 	#
 	# getAllMotorParams
 	#
