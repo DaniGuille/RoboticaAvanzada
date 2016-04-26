@@ -50,7 +50,7 @@ private:
 	QString base;
 	QStringList legs;
 	int X, Y, Z, modovalue, modoaux,syn;
-	float ik_x, ik_y, ik_z, vel;
+	float ik_x, ik_y, ik_z, vel, x, y , z;
 	QVec legsp[6], lini, lfin, lmed, lrot, lrot1, lrot2;
 	bool IK;
 	LegControllerPrx proxies[6];

@@ -60,7 +60,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		
 		aux=inner->transform(foot,motores.at(2));
 		tibia=aux.norm2();
-		pos_foot =inner->transform(floor,foot);
+		
 		qDebug()<<"-----------------------------";
 		qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
 		qDebug()<<"    coxa   = "<<coxa;
@@ -73,28 +73,17 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		qDebug()<<"    m1 = "<<motores.at(0);
 		qDebug()<<"    m2 = "<<motores.at(1);
 		qDebug()<<"    m2 = "<<motores.at(2);
-		qDebug()<<"    posfoot = "<<pos_foot; 
 		qDebug()<<"-----------------------------";
 	}
 	catch(std::exception e)
 	{
 		qFatal("Error reading config params");
 	}
-	try{
-		moverangles(QVec::vec3(0.,0.5,-1),1);
-	}
-	catch(std::exception e)
-	{
-	    qDebug()<<"no he llegado";
-	}
 	for(auto name:motores)
 	{
-		motorsparams[name.toStdString()]=jointmotor1_proxy->getMotorParams(name.toStdString());
-// 		statemap.insert(std::pair<string,RoboCompJointMotor::MotorState>(name.toStdString()));
+		motorsparams[name.toStdString()]=jointmotor2_proxy->getMotorParams(name.toStdString());
 	}
-	for(auto name:motores)
-		qDebug()<<motorsparams[name.toStdString()].offset;
-	
+	pos_foot =inner->transform(floor,foot);
 	timer.start(Period);
 
 	return true;
@@ -105,7 +94,7 @@ void SpecificWorker::compute()
 	try{
 		foreach(QString m, motores)
 		{
-			statemap[m.toStdString()]=jointmotor1_proxy->getMotorState(m.toStdString());//robot
+			statemap[m.toStdString()]=jointmotor2_proxy->getMotorState(m.toStdString());//robot
 			inner->updateJointValue(m,statemap[m.toStdString()].pos);
 		}
 	}
@@ -140,7 +129,7 @@ StateLeg SpecificWorker::getStateLeg()
 	{
 		try
 		{
-			ms=jointmotor1_proxy->getMotorState(m.toStdString());
+			ms=jointmotor2_proxy->getMotorState(m.toStdString());
 			if(ms.isMoving)
 				s.ismoving=true;
 			aux[i].pos=ms.pos;
@@ -173,7 +162,6 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 	try
 	{
 		QVec posfoot=inner->transform(motores.at(0),QVec::vec3(p.x,p.y,p.z),QString::fromStdString(p.ref));
-		qDebug()<<p.x<<p.y<<p.z;
 		QVec angles=movFoottoPoint(posfoot, exito);
 		if(exito&&!simu)
 		{
@@ -199,16 +187,16 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 }
 
 bool SpecificWorker::setIKBody(const PoseBody &p, const bool &simu)
-{	
+{
 	//inicio rotar el cuerpo
 	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
 	//fin rotar el cuerpo
-	QVec pos=inner->transform(base,pos_foot,floor);
+	QVec pos=inner->transform(base,QVec::vec3(p.px,p.py,p.pz),QString::fromStdString(p.ref));
 	PoseLeg pl;
-	pl.ref=base.toStdString();
-	pl.x=pos.x();
-	pl.y=pos.y();
-	pl.z=pos.z();
+	pl.ref = base.toStdString();
+	pl.x = pos.x() + p.x;
+	pl.y = pos.y() + p.y;
+	pl.z = pos.z() + p.z;
 	pl.vel=p.vel;
 	return setIKLeg(pl,simu);
 }
@@ -294,7 +282,7 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 				q2=angles(1) *signleg,
 				q3=angles(2) *signleg;
 // 		qDebug()<<"Leg: "<<foot<<" Moviendo"<<"q1 = "<<q1<<"  q2 = "<<q2<<"  q3 = "<<q3;
-		MotorState m=jointmotor1_proxy->getMotorState(motores.at(0).toStdString());
+		MotorState m=jointmotor2_proxy->getMotorState(motores.at(0).toStdString());
 		v.name = p.name = motores.at(0).toStdString();
 		v.velocity = vel;
 		p.maxSpeed=0/*fabs(q1-m.pos)*vel*/;
@@ -302,7 +290,7 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor1_proxy->getMotorState(motores.at(1).toStdString());
+		m=jointmotor2_proxy->getMotorState(motores.at(1).toStdString());
 		v.name = p.name=motores.at(1).toStdString();
 		v.velocity = vel;
 		p.maxSpeed=0/*fabs(q2-m.pos)*vel*/;
@@ -310,16 +298,16 @@ void SpecificWorker::moverangles(QVec angles,double vel)
 		mg.push_back(p);
 		mv.push_back(v);
 		
-		m=jointmotor1_proxy->getMotorState(motores.at(2).toStdString());
+		m=jointmotor2_proxy->getMotorState(motores.at(2).toStdString());
 		v.name = p.name=motores.at(2).toStdString();
 		v.velocity = vel;
 		p.position=q3;
 		p.maxSpeed=0/*fabs(q3-m.pos)*vel*/;
 		mg.push_back(p);
 		mv.push_back(v);
-// 		jointmotor1_proxy->setSyncVelocity(mv);
-		jointmotor1_proxy->setSyncPosition(mg);
-// 		jointmotor1_proxy->setSyncPosition(mg);
+// 		jointmotor2_proxy->setSyncVelocity(mv);
+		jointmotor2_proxy->setSyncPosition(mg);
+// 		jointmotor2_proxy->setSyncPosition(mg);
 		
 	}
 	else
