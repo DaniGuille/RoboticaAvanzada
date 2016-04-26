@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+ef3646161628570706da77ca194bc444 src/CMakeFiles/FootPreassureSensor_automoc
+e0fa2fc4410452c9715298c9980c08f1 src/CommonBehavior.cpp
+e4094195e8b11cf3c6cab0575ff65f2e src/FootPreassureSensor.cpp
+87491b7688351d7de2242138d93c52b5 src/ui_mainUI.h

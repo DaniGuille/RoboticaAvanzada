@@ -1,0 +1,1 @@
+/home/robocomp/robocomp/components/RoboticaAvanzada/LegControllerComp/src/CMakeFiles/LegControllerComp.dir

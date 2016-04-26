@@ -173,6 +173,7 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 	try
 	{
 		QVec posfoot=inner->transform(motores.at(0),QVec::vec3(p.x,p.y,p.z),QString::fromStdString(p.ref));
+		qDebug()<<p.x<<p.y<<p.z;
 		QVec angles=movFoottoPoint(posfoot, exito);
 		if(exito&&!simu)
 		{
