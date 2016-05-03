@@ -90,7 +90,8 @@ void SpecificMonitor::readConfig(RoboCompCommonBehavior::ParameterList &params )
 	aux.editable = true;
 	bool defaulterror=false;
 	string name = PROGRAM_NAME;
-	
+	configGetString("",name+".name", aux.value, "default");
+	params[name+".name"] = aux;
 	configGetString("",name+".floor", aux.value, "floor");
 	params[name+".floor"] = aux;
 	
