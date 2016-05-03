@@ -63,10 +63,9 @@ public slots:
 	void compute(); 	
 
 private:
-	
 	InnerModel *inner;
 	QStringList motores;
-	QString foot,floor,base;
+	QString foot,floor,base,nameLeg;
 	double  coxa, femur, tibia;
 	QVec pos_foot;
 	int signleg;

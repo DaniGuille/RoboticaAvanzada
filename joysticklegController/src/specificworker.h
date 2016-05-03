@@ -23,16 +23,13 @@
 */
 
 
-
-
-
-
-
 #ifndef SPECIFICWORKER_H
 #define SPECIFICWORKER_H
 
 #include <genericworker.h>
 #include <innermodel/innermodel.h>
+#include <osgviewer/osgview.h>
+#include <innermodel/innermodelviewer.h>
 
 class SpecificWorker : public GenericWorker
 {
@@ -52,27 +49,34 @@ private:
 	InnerModel *inner;
 	QString base;
 	QStringList legs;
-// 	QVec leg1,leg2,leg3,leg4,leg5,leg6;
-	int X, Y, Z;
-	QVec legsp[6];
-	QVec lini,lfin,lmed,lrot;
-	float vel;
-	int modovalue,modoaux;
+	int X, Y, Z, modovalue, modoaux,syn;
+	float ik_x, ik_y, ik_z, vel, x, y , z;
+	QVec legsp[6], lini, lfin, lmed, lrot, lrot1, lrot2;
 	bool IK;
 	LegControllerPrx proxies[6];
 	int l1[3],l2[3];
-	RoboCompLegController::StateLeg statelegs[6];
+	RoboCompLegController::StateLeg statelegs[6],prestatelegs[6];
+	RoboCompLegController::AnglesLeg angles;
 	
+	/*---------------------------------------------*/
+	void updateStates();
+	void statesmachine();
+	void uphexapod();
+	void fkLegs();
+	void ikLegs();
+	void fkBody();
 	void caminarDespacio();
 	bool caminar3x3();
 	bool rotar();
-	void cubo();
-	void colocar_patas();
-	void uphexapod();
+	
+	
 	QVec bezier3(QVec p0, QVec p1, QVec p2, float t);
 	QVec bezier2(QVec p0, QVec p2, float t);
-	float getPoint( int n1 , int n2 , float perc );
+	
 	double mapear(double x, double in_min, double in_max, double out_min, double out_max);
+	
+	OsgView *osgView;
+	InnerModelViewer *innerViewer;
 	
 };
 

@@ -67,12 +67,25 @@ class SpecificWorker(GenericWorker):
 		try:
 			print "raising leg"
 			mg = MotorGoalPosition()
-			mg.name = "arm1motor1"
-			mg.position = 0.5
+			mg.name = "arm2motor1"
+			mg.position = 0
+			
+			mg1 = MotorGoalPosition()
+			mg1.name = "arm2motor2"
+			mg1.position = 0.75
+			
+			mg2 = MotorGoalPosition()
+			mg2.name = "arm2motor3"
+			mg2.position = 0.75
+			
+			
+			
 			self.jointmotor_proxy.setPosition( mg ) 
+			self.jointmotor_proxy.setPosition( mg1 ) 
+			self.jointmotor_proxy.setPosition( mg2 ) 
+			
 			state = self.jointmotor_proxy.getMotorState(mg.name)
 			while state.isMoving is True:
-				print "state", state
 				time.sleep(0.1) 
 				state = self.jointmotor_proxy.getMotorState(mg.name)
 			print "acabe", state

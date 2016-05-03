@@ -16,7 +16,7 @@ ser = dynamixel.get_serial_for_url(serial_port, baudrate=1000000)
 for i in range(1,19):
   dynamixel.init(ser, i)
 
-for i in range(5,6):
+for i in range(1,19):
   try:
     p = dynamixel.get_position(ser, i, num_error_attempts=10)
     print "motor", i, "pos" ,p

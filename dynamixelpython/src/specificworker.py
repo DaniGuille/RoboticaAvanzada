@@ -50,9 +50,14 @@ class SpecificWorker(GenericWorker):
 	mutex_bus=QtCore.QMutex()
 	L_L_Goals= []
 	motorStateMap = {}
+<<<<<<< HEAD
 	mutmState=mutex()
 	serial_port = ""
 	ListaPuntos = []
+=======
+	serial_port = '/dev/ttyUSB0'
+
+>>>>>>> eab22fb6fe7a1932310cf3d905fe9f452712d6c3
 	
 	def __init__(self, proxy_map):
 		super(SpecificWorker, self).__init__(proxy_map)
@@ -109,6 +114,7 @@ class SpecificWorker(GenericWorker):
 		self.ComprobarLista2()
 		self.readState()
 		
+<<<<<<< HEAD
 #####################################################
 	
 	@QtCore.Slot()
@@ -125,6 +131,22 @@ class SpecificWorker(GenericWorker):
 					self.motorStateMap[m.name] = state
 				except Exception, e:
 					print e
+=======
+		for m in self.motorParams:
+			try:
+				state = MotorState()
+				state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
+				state.pos=(state.pos) * (2.618 + 2.618) / 1023
+				state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
+				print state.isMoving
+				##print state.pos
+				self.motorStateMap[m.name] = state
+			except Exception, e:
+				traceback.print_exc()
+				print e
+	#
+	# getAllMotorParams
+>>>>>>> eab22fb6fe7a1932310cf3d905fe9f452712d6c3
 	#
 	def getAllMotorParams(self):
 		return self.motorParams
