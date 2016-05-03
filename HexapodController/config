@@ -19,3 +19,12 @@ Ice.ACM.Client=10
 Ice.ACM.Server=10
 
 
+hexapodcontroller.floor=floor
+hexapodcontroller.base=base
+hexapodcontroller.InnerModel=/home/robocomp/robocomp/files/innermodel/hexapod.xml
+hexapodcontroller.nameleg1=arm1TipT
+hexapodcontroller.nameleg2=arm2TipT
+hexapodcontroller.nameleg3=arm3TipT
+hexapodcontroller.nameleg4=arm4TipT
+hexapodcontroller.nameleg5=arm5TipT
+hexapodcontroller.nameleg6=arm6TipT
