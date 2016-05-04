@@ -91,14 +91,13 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	for(auto p:legsp)
 		qDebug()<<p;
 	
-	timer.start(10);
+	timer.start(100);
 	
 	return true;
 }
 
 void SpecificWorker::compute()
 {	
-	bool ismoving=false;
 	syn+=3;
 	switch(modovalue)
 	{
@@ -115,28 +114,20 @@ void SpecificWorker::compute()
 			break;
 		case 2:
 			modo->setText("IK Body");
-			fkBody();
+			ikBody();
 			break;
 		case 3:
 			modo->setText("Caminar3x3");
-			for(int k=0;k<6;k++)
-				if(proxies[k]->getStateLeg().ismoving){
-					ismoving=true;
-					break;
-				}
-			if(!ismoving)
-				if(caminar3x3())
-				{
-					lini=QVec::vec3(-X,0,-Z);
-					lfin=QVec::vec3(X,0,Z);
-				}
+			if(caminar3x3())
+			{
+				lini=QVec::vec3(-X,0,-Z);
+				lfin=QVec::vec3(X,0,Z);
+			}
 			break;
 		case 4:
 			modo->setText("Rotar");
 			if(rotar())
-			{
 				lrot=QVec::vec3(0,0,Y);
-			}
 			break;
 	}
 	for(int i=0;i<6;i++)
@@ -213,128 +204,54 @@ void SpecificWorker::caminarDespacio()
 
 bool SpecificWorker::caminar3x3()
 {
-	static float i=0;	
-	if(lini!=QVec::vec3(0, 0, 0)&&lfin!=QVec::vec3(0,0,0))
-	{
-		//patas por arco
-		for(int s=0;s<3;s++)
-		{
-			RoboCompLegController::StateLeg st=statelegs[l1[s]];
-			QVec posini =QVec::vec3(st.x,legsp[l1[s]].y(),st.z);
-			QVec ini = posini,fin = legsp[l1[s]]+lfin,med=legsp[l1[s]];
-			QVec tmp=bezier3(ini,QVec::vec3(med.x(),0,med.z()),fin,i);
-			RoboCompLegController::PoseLeg p;
-			p.x=tmp.x();
-			p.y=tmp.y();
-			p.z=tmp.z();
-			p.ref=base.toStdString();
-			p.vel=6;
-			proxies[l1[s]]->setIKLeg(p,false);
-			
-		}
-	// patas por tierra
-		for(int s=0;s<3;s++)
-		{
-			RoboCompLegController::StateLeg st=statelegs[l2[s]];
-			QVec posini =QVec::vec3(st.x,legsp[l2[s]].y(),st.z);
-			QVec ini = posini,fin = legsp[l2[s]]+lini;
-			QVec tmp=bezier2(ini,fin,i);
-			RoboCompLegController::PoseLeg p;
-			p.x=tmp.x();
-			p.y=tmp.y();
-			p.z=tmp.z();
-			p.ref=base.toStdString();
-			p.vel=6;
-			proxies[l2[s]]->setIKLeg(p,false);
-			
-		}
-		i+=tbezier;
-		if (i>1)
-		{
-			int aux[]={l1[0],l1[1],l1[2]};
-			l1[0]=l2[0];
-			l1[1]=l2[1];
-			l1[2]=l2[2];
-			l2[0]=aux[0];
-			l2[1]=aux[1];
-			l2[2]=aux[2];
-			i=0;
-			return true;
-		}
-		return false;
-	}
-	return true;
-}
-
-bool SpecificWorker::rotar()
-{
-	if(lrot!=QVec::vec3(0, 0, 0))
-	{
-		static float i=0;
-		bool ismoving=false;;
+	static float i=0;
+	bool ismoving=false;
+	if(i==0)
 		for(int k=0;k<6;k++)
 			if(proxies[k]->getStateLeg().ismoving)
 			{
 				ismoving=true;
 				break;
 			}
-		if(!ismoving)
+	if(!ismoving)	
+	{
+		if(lini!=QVec::vec3(0, 0, 0)&&lfin!=QVec::vec3(0,0,0))
 		{
-		//patas por arco
-			QVec ini,fin;
+			//patas por arco
 			for(int s=0;s<3;s++)
-			{	
+			{
 				RoboCompLegController::StateLeg st=statelegs[l1[s]];
 				QVec posini =QVec::vec3(st.x,legsp[l1[s]].y(),st.z);
-				if(s!=1)
-				{
-					ini = posini;
-					fin = legsp[l1[s]]+lrot;
-				}
-				else
-				{
-					ini = posini;
-					fin = legsp[l1[s]]-lrot;
-				}
-				QVec tmp=bezier3(ini,bezier2(ini,fin,0.5)+lmed,fin,i);
+				QVec ini = posini,fin = legsp[l1[s]]+lfin,med=legsp[l1[s]];
+				QVec tmp=bezier3(ini,QVec::vec3(med.x(),0,med.z()),fin,i);
 				RoboCompLegController::PoseLeg p;
-				p.x   = tmp.x();
-				p.y   = tmp.y();
-				p.z   = tmp.z();
-				p.ref = base.toStdString();
-				p.vel = 6;
+				p.x=tmp.x();
+				p.y=tmp.y();
+				p.z=tmp.z();
+				p.ref=base.toStdString();
+				p.vel=6;
 				proxies[l1[s]]->setIKLeg(p,false);
 				
 			}
 		// patas por tierra
 			for(int s=0;s<3;s++)
 			{
-				RoboCompLegController::StateLeg st = statelegs[l2[s]];
-				QVec posini = QVec::vec3(st.x,legsp[l2[s]].y(),st.z);
-				if(s!=1)
-				{
-					ini = posini;
-					fin = legsp[l2[s]]-lrot;
-				}
-				else
-				{
-					ini = posini;
-					fin = legsp[l2[s]]+lrot;
-				}
-				QVec tmp = bezier2(ini,fin,i);
+				RoboCompLegController::StateLeg st=statelegs[l2[s]];
+				QVec posini =QVec::vec3(st.x,legsp[l2[s]].y(),st.z);
+				QVec ini = posini,fin = legsp[l2[s]]+lini;
+				QVec tmp=bezier2(ini,fin,i);
 				RoboCompLegController::PoseLeg p;
-				p.x   = tmp.x();
-				p.y   = tmp.y();
-				p.z   = tmp.z();
-				p.ref = base.toStdString();
-				p.vel = 6;
+				p.x=tmp.x();
+				p.y=tmp.y();
+				p.z=tmp.z();
+				p.ref=base.toStdString();
+				p.vel=6;
 				proxies[l2[s]]->setIKLeg(p,false);
 				
 			}
 			i+=tbezier;
 			if (i>1)
 			{
-				
 				int aux[]={l1[0],l1[1],l1[2]};
 				l1[0]=l2[0];
 				l1[1]=l2[1];
@@ -343,6 +260,75 @@ bool SpecificWorker::rotar()
 				l2[1]=aux[1];
 				l2[2]=aux[2];
 				i=0;
+				return true;
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+bool SpecificWorker::rotar()
+{
+	static bool estado=true;
+	if(lrot!=QVec::vec3(0, 0, 0))
+	{
+		static float i=0;
+		bool ismoving=false;
+		for(int k=0;k<6;k++)
+			if(proxies[k]->getStateLeg().ismoving)
+			{
+				ismoving=true;
+				break;
+			}
+		if(!ismoving)
+		{
+			QVec ini,fin;
+			for(int j=0;j<6;j++)
+			{
+				RoboCompLegController::StateLeg st=statelegs[j];
+				QVec posini =QVec::vec3(st.x,legsp[j].y(),st.z);
+				if((j==2 || j==3))
+				{
+					ini = posini;
+					if(estado)
+						fin = legsp[j]+lrot;
+					else
+						fin = legsp[j]-lrot;
+				}
+				else
+				{
+					ini = posini;
+					if(estado)
+						fin = legsp[j]-lrot;
+					else
+						fin = legsp[j]+lrot;
+				}
+				QVec tmp;
+				if(estado)
+					if(j==0||j==3||j==4)
+						tmp=bezier3(ini,bezier2(ini,fin,0.5)+lmed,fin,i);
+					else
+						tmp = bezier2(ini,fin,i);
+				else
+					if(j==0||j==3||j==4)
+						tmp = bezier2(ini,fin,i);
+					else
+						tmp=bezier3(ini,bezier2(ini,fin,0.5)+lmed,fin,i);
+				
+				RoboCompLegController::PoseLeg p;
+				p.x   = tmp.x();
+				p.y   = tmp.y();
+				p.z   = tmp.z();
+				p.ref = base.toStdString();
+				p.vel = 6;
+				proxies[j]->setIKLeg(p,false);
+			}
+			i+=tbezier;
+			if (i>1)
+			{
+				i=0;
+				estado=!estado;
 				return true;
 			}
 		}
@@ -363,17 +349,17 @@ void SpecificWorker::sendData(const TData& data)
 	b=data.buttons.at(1);
 	if(b.clicked)
 	{	
-		RoboCompLegController::AnglesLeg a;
-		a.q1=0;
-		a.q2=0.3;
-		a.q3=0.6;
-		a.vel=6;
-		for (int i=0;i<6;i++){
-			proxies[i]->setFKLeg(a,false);
-		}
+// 		RoboCompLegController::AnglesLeg a;
+// 		a.q1=0;
+// 		a.q2=0.3;
+// 		a.q3=0.6;
+// 		a.vel=6;
+// 		for (int i=0;i<6;i++){
+// 			proxies[i]->setFKLeg(a,false);
+// 		}
 		if(modovalue!=-1)
 			modoaux=modovalue;
-		sleep(2);
+// 		sleep(2);
 		modovalue=-1;
 	}
 	b=data.buttons.at(2);
@@ -447,17 +433,17 @@ void SpecificWorker::fkLegs()
 		proxies[i]->setFKLeg(angles, false);
 }
 
-void SpecificWorker::fkBody()
+void SpecificWorker::ikBody()
 {
 	RoboCompLegController::PoseBody pb[6];
 	bool simufallida =false;
 	for(int i=0;i<6;i++)
 	{
 		pb[i].vel = vel;
-		pb[i].rx = angles.q1;
-		pb[i].ry = angles.q2;
-		pb[i].rz = angles.q3;
 		pb[i].ref = base.toStdString();
+		pb[i].rx = angles.q1/1.5;
+		pb[i].ry = angles.q2/1.5;
+		pb[i].rz = angles.q3/1.5;
 		pb[i].px=legsp[i].x();
 		pb[i].py=legsp[i].y();
 		pb[i].pz=legsp[i].z();
@@ -479,9 +465,8 @@ void SpecificWorker::fkBody()
 			proxies[i]->setIKBody(pb[i],false);
 }
 
-void SpecificWorker::uphexapod()
-{
-	bool ismov=false;
+/* uphexapod
+ * bool ismov=false;
 	static bool first=true,state=true;
 	static float i;
 	for(int s=0;s<6;s++)
@@ -550,6 +535,70 @@ void SpecificWorker::uphexapod()
 			state=false;
 		i=0;
 		first=true;
+	}
+ * 
+ * 
+ * 
+ */
+
+
+
+void SpecificWorker::uphexapod()
+{
+	static bool state=true;
+	static float i;
+	static QVec ini[6],fin[6];
+	RoboCompLegController::PoseLeg p;
+	p.ref=base.toStdString();
+	p.vel=6;
+	if(state)
+	{
+		for(int s=0;s<6;s++)
+		{
+			if(i==0)
+			{
+				RoboCompLegController::StateLeg st=statelegs[s];
+				fin[s] = QVec::vec3(legsp[s].x(),20,legsp[s].z());
+				ini[s] = QVec::vec3(st.x,st.y,st.z);
+			}
+			QVec tmp=bezier2(ini[s],fin[s],i);
+			p.x=tmp.x();
+			p.y=tmp.y();
+			p.z=tmp.z();
+			proxies[s]->setIKLeg(p,false);
+		}
+		qDebug()<<i;
+		i+=0.1;
+	}
+	else
+	{
+		for(int s=0;s<6;s++)
+		{
+			if(i==0)
+			{
+				RoboCompLegController::StateLeg st=statelegs[s];
+				fin[s] =legsp[s];
+				ini[s] = QVec::vec3(st.x,st.y,st.z);
+			}
+			QVec tmp=bezier2(ini[s],fin[s],i);
+			p.x=tmp.x();
+			p.y=tmp.y();
+			p.z=tmp.z();
+			proxies[s]->setIKLeg(p,false);
+		}
+		qDebug()<<i;
+		i+=0.1;
+	}
+	if(i>1)
+	{
+		if(!state)
+		{
+			state=true;
+			modovalue=modoaux;
+		}
+		else
+			state=false;
+		i=0;
 	}
 }
 

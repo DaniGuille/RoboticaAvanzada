@@ -55,7 +55,7 @@ private:
 	bool IK;
 	LegControllerPrx proxies[6];
 	int l1[3],l2[3];
-	RoboCompLegController::StateLeg statelegs[6],prestatelegs[6];
+	RoboCompLegController::StateLeg statelegs[6];
 	RoboCompLegController::AnglesLeg angles;
 	
 	/*---------------------------------------------*/
@@ -64,7 +64,7 @@ private:
 	void uphexapod();
 	void fkLegs();
 	void ikLegs();
-	void fkBody();
+	void ikBody();
 	void caminarDespacio();
 	bool caminar3x3();
 	bool rotar();
