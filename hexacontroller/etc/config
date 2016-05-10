@@ -1,5 +1,5 @@
 # Proxies for required interfaces
-JointMotorProxy = jointmotor:tcp -h 158.49.227.223 -p 20000 
+JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000 
 
 # This property is used by the clients to connect to IceStorm.
 TopicManager.Proxy=IceStorm/TopicManager:default -p 9999

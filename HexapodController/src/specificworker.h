@@ -42,26 +42,43 @@ public:
 
 public slots:
 	void compute();
-	void rotar();
-	void avanzar();	
-	void subir();
-	void bajar();
-	void remar();
-	void fromSliderZ(int);
+	int  cambiarEstado(int valor);
+	void movimientos(int estado);
+	bool One_by_One();
+	bool Tripod();
+	bool Quadruped();
+	bool Free();
+	QVec bezier2(QVec p0, QVec p1, float t);
+	QVec bezier3(QVec p0, QVec p1, QVec p2, float t);
+	
+	//void avanzar();	
+	//void subir();
+	//void bajar();
+	//void remar();
+	//void fromSliderZ(int);
 	void resetPos();
 
 private:
   RoboCompLegController::PoseLeg pose;
   InnerModel *innerModel;
   RoboCompJointMotor::MotorParamsList motores;
-  void updateMotorList();
+  //void updateMotorList();
   void actualizarPos();
-  LegControllerPrx proxys[6];
+  LegControllerPrx proxies[6];
   RoboCompLegController::StateLeg posiciones[6];
   RoboCompLegController::StateLeg posIniciales[6];
   int estado;
   int numPata;
+  int X,Z;
   
+  int legsTripodOn[3], legsTripodOff[3], legsOneByOneOn[1], legsOneByOneOff[5], legsQuadrupedOn[2], legsQuadrupedOff[4] ;
+  QVec lini,lfin,lmed,lrot;
+  QVec legCoord[6];
+  QString base;
+  
+  double mapear(double x, double in_min, double in_max, double out_min, double out_max);
+
+
   
 };
 

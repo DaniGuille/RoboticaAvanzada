@@ -5,6 +5,28 @@
 ```
 Intro to component here
 
+El componente foot pressure devuelve la presión leida por un sensor colocado en los extremos de las patas de la araña, usados para conocer qué pierna apoya con mayor fuerza en cada pata y emplearlo para realizar movimientos
+
+Métodos de la interfaz foot pressure
+
+ interface FootPreassureSensor
+    {
+        Buffer readSensors();
+	int readSensor(string name);
+    };
+
+readSensors() devuelve los valores de todos los sensores de presión en un string.
+readsensor(name) devuelve el valor del sensor que solicitamos mediante la variable name.
+
+Los nombres de las patas son:
+p1 (delantera izquierda)
+p2 (delantera derecha)
+p3 (media izquierda)
+p4 (media derecha)
+p5 (trasera izquierda)
+p6 (trasera derecha)
+
+
 
 ## Configuration parameters
 As any other component,

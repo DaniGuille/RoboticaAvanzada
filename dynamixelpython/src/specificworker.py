@@ -17,11 +17,14 @@
 #    along with RoboComp.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import sys, os, Ice, traceback, time
+import sys, os, Ice, traceback, time, collections
 import numpy as np
 from pydynamixel import dynamixel
+from pydynamixel import registers
+from pydynamixel import packets
 
-
+from mutex	import *
+from threading import Lock
 from PySide import *
 from genericworker import *
 
@@ -43,23 +46,39 @@ from jointmotorI import *
 
 class SpecificWorker(GenericWorker):
 	
+	lisPos=collections.deque()
+	bool=0;	
 	motorParams = []
+	mutex_bus=QtCore.QMutex()
+	L_L_Goals= []
 	motorStateMap = {}
+	mutmState=mutex()
+	serial_port = ""
+	ListaPuntos = []
 	serial_port = '/dev/ttyUSB0'
-
 	
 	def __init__(self, proxy_map):
 		super(SpecificWorker, self).__init__(proxy_map)
 		params = ()
 		self.setParams(params)
 		self.timer.timeout.connect(self.compute)
-		self.Period = 1000
-		self.timer.start(self.Period)
+		self.timer.start(5)
+		#self.timerS = QtCore.QTimer()
+		#self.timerS.timeout.connect(self.readState)
+		#self.timerS.start(250)
+		
 
 	def setParams(self, params):
 		i=0
-		with open("etc/config","r") as f:
+		with open("/home/odroid/RoboticaAvanzada/dynamixelpython/etc/config","r") as f:
 			for linea in f.readlines():
+				
+				if "Device" in linea:
+					sep=linea.split("=")
+					self.serial_port=sep[1].replace("\n","")
+				else:
+					self.serial_port = '/dev/ttyUSB0'
+				
 				#if "NumMotors" in linea:
 				    #separacion = linea.split("=")
 				    #motorParams = separacion[1]
@@ -88,27 +107,85 @@ class SpecificWorker(GenericWorker):
 
 	@QtCore.Slot()
 	def compute(self):
-		#print 'SpecificWorker.compute...'
-		
-		for m in self.motorParams:
-			try:
-				state = MotorState()
-				state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
-				state.pos=(state.pos) * (2.618 + 2.618) / 1023
-				state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
-				print state.isMoving
-				##print state.pos
-				self.motorStateMap[m.name] = state
-			except Exception, e:
-				traceback.print_exc()
-				print e
+		self.ComprobarLista()
+		self.ComprobarLista2()
+		self.readState()
+				
+#####################################################
+	
+	@QtCore.Slot()
+	def readState(self):
+		with QtCore.QMutexLocker(self.mutex_bus):
+			for m in self.motorParams:
+				try:
+					state = MotorState()
+					state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
+					state.pos=(state.pos) * (2.618 + 2.618) / 1023 -2.618
+					if m.invertedSign == "true":
+						state.pos=-state.pos
+					state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
+					self.motorStateMap[m.name] = state
+
+			
+					#state.temperature=
+					#packet = packets.get_read_packet(m.busId,registers.PRESENT_TEMPERATURE,2)
+                                        #packet = packets.get_read_packet(m.busId,registers.PRESENT_SPEED,2)
+                                        #print packet
+				except Exception, e:
+					print  e, "   ------>>>>>>>>     HOLA DESDE EXCEPT"
+					
+			
 	#
 	# getAllMotorParams
 	#
 	def getAllMotorParams(self):
 		return self.motorParams
 
+	def mapear(self, x, in_min, in_max, out_min, out_max):
+		return (x-in_min)*(out_max-out_min)/(in_max-in_min)+out_min
 
+	def ComprobarLista(self):	
+		
+		if len(self.lisPos) == 0:
+			return
+		try:
+			m = self.lisPos.popleft()
+			for x in self.motorParams:
+				if x.name == m.name:
+					busId = x.busId
+					break
+			pos = np.ushort((m.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
+			vel = np.ushort(m.maxSpeed)
+			dynamixel.set_velocity(self.bus,busId, vel)
+			dynamixel.set_position(self.bus, busId, pos)
+			dynamixel.send_action_packet(self.bus)
+		except Ice.Exception, e:
+			traceback.print_exc()
+			print e
+	
+	def ComprobarLista2(self):	
+		
+		if len(self.L_L_Goals) < 6:
+			return
+		with QtCore.QMutexLocker(self.mutex_bus):
+			try:
+				for x in range(0,5):
+					m = self.L_L_Goals.pop(0)
+					for goal in m:
+						for x in self.motorParams:
+							if x.name == goal.name:
+								busId = x.busId
+								break
+						if x.invertedSign == "true":
+                                                        goal.position=-goal.position
+						pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
+						vel = np.ushort(goal.maxSpeed)
+						dynamixel.set_velocity(self.bus,busId, vel)
+						dynamixel.set_position(self.bus, busId, pos)
+				dynamixel.send_action_packet(self.bus)
+			except Ice.Exception, e:
+				traceback.print_exc()
+				print e
 	#
 	# getAllMotorState
 	#
@@ -119,6 +196,7 @@ class SpecificWorker(GenericWorker):
 	#
 	# getMotorParams
 	#
+	
 	def getMotorParams(self, motor):
 		 
 		pos=[x for x in self.motorParams if x.name == motor]
@@ -169,20 +247,24 @@ class SpecificWorker(GenericWorker):
 	# setSyncPosition
 	#
 	def setSyncPosition(self, listGoals):
-		for goal in listGoals:
-			m = [x for x in self.motorParams if x.name == goal.name]
-			
-			if len(m)>0:
-				
-					position=(goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618)
-					pos=np.ushort(position)
-					vel=np.ushort(goal.maxSpeed)
-				
-					dynamixel.set_velocity(self.bus,(m[0].busId),vel)
-					dynamixel.set_position(self.bus, (m[0].busId),pos)
-					dynamixel.send_action_packet(self.bus)
-				
-
+		self.L_L_Goals.append(listGoals)
+		print "HOLA DESDE SET"
+		"""with QtCore.QMutexLocker(self.mutex_bus):
+			try:
+                       		for goal in listGoals:
+                               		for x in self.motorParams:
+                                       		if x.name == goal.name:
+                                               		busId = x.busId
+                                               		break	
+                               		pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
+                               		vel = np.ushort(goal.maxSpeed)
+                        		dynamixel.set_velocity(self.bus,busId, vel)
+                               		dynamixel.set_position(self.bus, busId, pos)
+	                      	dynamixel.send_action_packet(self.bus)
+			except Ice.Exception, e:
+	               	        traceback.print_exc()
+        	       	        print e"""	
+						
 	#
 	# getMotorStateMap
 	#
