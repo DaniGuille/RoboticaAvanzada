@@ -132,8 +132,7 @@ class SpecificWorker(GenericWorker):
                                         #packet = packets.get_read_packet(m.busId,registers.PRESENT_SPEED,2)
                                         #print packet
 				except Exception, e:
-					print  e, "   ------>>>>>>>>     HOLA DESDE EXCEPT"
-					
+					print  e					
 			
 	#
 	# getAllMotorParams
@@ -190,7 +189,8 @@ class SpecificWorker(GenericWorker):
 	# getAllMotorState
 	#
 	def getAllMotorState(self):
-		return self.motorStateMap
+		with QtCore.QMutexLocker(self.mutex_bus):
+			return self.motorStateMap
 
 
 	#
@@ -248,23 +248,7 @@ class SpecificWorker(GenericWorker):
 	#
 	def setSyncPosition(self, listGoals):
 		self.L_L_Goals.append(listGoals)
-		print "HOLA DESDE SET"
-		"""with QtCore.QMutexLocker(self.mutex_bus):
-			try:
-                       		for goal in listGoals:
-                               		for x in self.motorParams:
-                                       		if x.name == goal.name:
-                                               		busId = x.busId
-                                               		break	
-                               		pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
-                               		vel = np.ushort(goal.maxSpeed)
-                        		dynamixel.set_velocity(self.bus,busId, vel)
-                               		dynamixel.set_position(self.bus, busId, pos)
-	                      	dynamixel.send_action_packet(self.bus)
-			except Ice.Exception, e:
-	               	        traceback.print_exc()
-        	       	        print e"""	
-						
+
 	#
 	# getMotorStateMap
 	#
@@ -295,9 +279,4 @@ class SpecificWorker(GenericWorker):
 			pos=np.ushort(goal.velocity)
 			dynamixel.set_velocity(self.bus, (m[0].busId),pos)
 			dynamixel.send_action_packet(self.bus)
-		
-
-
-
-
 
