@@ -25,7 +25,7 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 {
 
 	serial.setBaudRate(serial.BaudRateType::BAUD115200);
-	serial.setName("/dev/ttyACM1");
+	serial.setName("/dev/ttyACM0");
 	serial.open();
 	if(serial.isOpen()){
 		printf("¡¡EL PUERTO YA ESTA ABIERTO!!");

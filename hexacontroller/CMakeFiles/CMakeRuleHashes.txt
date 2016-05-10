@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-f2ec8aaf6ab5cc04d3ea75e52aba4e4f CMakeFiles/ui_mainUI
-ceadc9f49e5b3a95c62540bdece5261f src/ui_mainUI.py

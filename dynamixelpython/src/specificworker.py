@@ -20,6 +20,8 @@
 import sys, os, Ice, traceback, time, collections
 import numpy as np
 from pydynamixel import dynamixel
+from pydynamixel import registers
+from pydynamixel import packets
 
 from mutex	import *
 from threading import Lock
@@ -50,14 +52,10 @@ class SpecificWorker(GenericWorker):
 	mutex_bus=QtCore.QMutex()
 	L_L_Goals= []
 	motorStateMap = {}
-<<<<<<< HEAD
 	mutmState=mutex()
 	serial_port = ""
 	ListaPuntos = []
-=======
 	serial_port = '/dev/ttyUSB0'
-
->>>>>>> eab22fb6fe7a1932310cf3d905fe9f452712d6c3
 	
 	def __init__(self, proxy_map):
 		super(SpecificWorker, self).__init__(proxy_map)
@@ -79,7 +77,7 @@ class SpecificWorker(GenericWorker):
 					sep=linea.split("=")
 					self.serial_port=sep[1].replace("\n","")
 				else:
-					self.serial_port = '/dev/ttyUSB1'
+					self.serial_port = '/dev/ttyUSB0'
 				
 				#if "NumMotors" in linea:
 				    #separacion = linea.split("=")
@@ -109,12 +107,10 @@ class SpecificWorker(GenericWorker):
 
 	@QtCore.Slot()
 	def compute(self):
-
 		self.ComprobarLista()
 		self.ComprobarLista2()
 		self.readState()
-		
-<<<<<<< HEAD
+				
 #####################################################
 	
 	@QtCore.Slot()
@@ -129,24 +125,17 @@ class SpecificWorker(GenericWorker):
 						state.pos=-state.pos
 					state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
 					self.motorStateMap[m.name] = state
+
+			
+					#state.temperature=
+					#packet = packets.get_read_packet(m.busId,registers.PRESENT_TEMPERATURE,2)
+                                        #packet = packets.get_read_packet(m.busId,registers.PRESENT_SPEED,2)
+                                        #print packet
 				except Exception, e:
-					print e
-=======
-		for m in self.motorParams:
-			try:
-				state = MotorState()
-				state.pos = float(dynamixel.get_position(self.bus, m.busId, num_error_attempts=10))
-				state.pos=(state.pos) * (2.618 + 2.618) / 1023
-				state.isMoving = dynamixel.get_is_moving(self.bus, m.busId, verbose=True, num_error_attempts=10)
-				print state.isMoving
-				##print state.pos
-				self.motorStateMap[m.name] = state
-			except Exception, e:
-				traceback.print_exc()
-				print e
+					print  e					
+			
 	#
 	# getAllMotorParams
->>>>>>> eab22fb6fe7a1932310cf3d905fe9f452712d6c3
 	#
 	def getAllMotorParams(self):
 		return self.motorParams
@@ -175,7 +164,7 @@ class SpecificWorker(GenericWorker):
 	
 	def ComprobarLista2(self):	
 		
-		if len(self.L_L_Goals) == 0:
+		if len(self.L_L_Goals) < 6:
 			return
 		with QtCore.QMutexLocker(self.mutex_bus):
 			try:
@@ -200,7 +189,8 @@ class SpecificWorker(GenericWorker):
 	# getAllMotorState
 	#
 	def getAllMotorState(self):
-		return self.motorStateMap
+		with QtCore.QMutexLocker(self.mutex_bus):
+			return self.motorStateMap
 
 
 	#
@@ -258,22 +248,7 @@ class SpecificWorker(GenericWorker):
 	#
 	def setSyncPosition(self, listGoals):
 		self.L_L_Goals.append(listGoals)
-		"""with QtCore.QMutexLocker(self.mutex_bus):
-			try:
-                       		for goal in listGoals:
-                               		for x in self.motorParams:
-                                       		if x.name == goal.name:
-                                               		busId = x.busId
-                                               		break	
-                               		pos = np.ushort((goal.position + 2.618) * (1023 - 0) / (2.618 + 2.618))
-                               		vel = np.ushort(goal.maxSpeed)
-                        		dynamixel.set_velocity(self.bus,busId, vel)
-                               		dynamixel.set_position(self.bus, busId, pos)
-	                      	dynamixel.send_action_packet(self.bus)
-			except Ice.Exception, e:
-	               	        traceback.print_exc()
-        	       	        print e"""	
-						
+
 	#
 	# getMotorStateMap
 	#
@@ -304,9 +279,4 @@ class SpecificWorker(GenericWorker):
 			pos=np.ushort(goal.velocity)
 			dynamixel.set_velocity(self.bus, (m[0].busId),pos)
 			dynamixel.send_action_packet(self.bus)
-		
-
-
-
-
 

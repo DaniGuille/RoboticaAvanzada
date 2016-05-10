@@ -58,7 +58,7 @@ class SpecificWorker(GenericWorker):
         def __init__(self, proxy_map):
 		super(SpecificWorker, self).__init__(proxy_map)
 		self.timer.timeout.connect(self.compute)
-		self.Period = 2000
+		self.Period = 100
 		self.timer.start(self.Period)
 		
                 self.lcdNumbers = [self.ui.lcdNumber_1,  self.ui.lcdNumber_3,  self.ui.lcdNumber_5, 
