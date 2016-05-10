@@ -49,7 +49,7 @@ private:
 	InnerModel *inner;
 	QString base;
 	QStringList legs;
-	int X, Y, Z, modovalue, modoaux,syn;
+	int X, Y, Z, X_pre, Y_pre, Z_pre, modovalue, modoaux,syn;
 	float ik_x, ik_y, ik_z, vel, x, y , z;
 	QVec legsp[6], lini, lfin, lmed, lrot, lrot1, lrot2;
 	bool IK;

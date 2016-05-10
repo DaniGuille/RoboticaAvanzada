@@ -18,7 +18,7 @@
  */
 #include "specificworker.h"
 #include <qt4/Qt/qlocale.h>
-#define tbezier 0.1
+#define tbezier 0.2
 /**
 * \brief Default constructor
 */
@@ -47,6 +47,12 @@ SpecificWorker::SpecificWorker(MapPrx& mprx) : GenericWorker(mprx)
 	x=0;
 	y=0;
 	z=0;
+	X=0;
+	Y=0;
+	Z=0;
+	X_pre=0;
+	Y_pre=0;
+	Z_pre=0;
 	angles.q1=0;
 	angles.q2=0;
 	angles.q3=0;
@@ -91,7 +97,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 	for(auto p:legsp)
 		qDebug()<<p;
 	
-	timer.start(100);
+	timer.start(10);
 	
 	return true;
 }
@@ -106,28 +112,60 @@ void SpecificWorker::compute()
 			break;
 		case 0:
 			modo->setText("FK");
-			fkLegs();
+			if(X_pre!=X || Y_pre!=Y || Z_pre!=Z)
+			{
+				fkLegs();
+				X_pre=X;
+				Y_pre=Y;
+				Z_pre=Z;
+				qDebug()<<"entro";
+			}
 			break;
 		case 1:
 			modo->setText("IK Leg");
-			ikLegs();
+			if(X_pre!=X || Y_pre!=Y || Z_pre!=Z)
+			{
+				ikLegs();
+			
+				X_pre=X;
+				Y_pre=Y;
+				Z_pre=Z;
+			}
 			break;
 		case 2:
 			modo->setText("IK Body");
-			ikBody();
+			if(X_pre!=X || Y_pre!=Y || Z_pre!=Z)
+			{
+				ikBody();
+				X_pre=X;
+				Y_pre=Y;
+				Z_pre=Z;
+			}
 			break;
 		case 3:
 			modo->setText("Caminar3x3");
-			if(caminar3x3())
-			{
-				lini=QVec::vec3(-X,0,-Z);
-				lfin=QVec::vec3(X,0,Z);
-			}
+// 			if(X_pre!=X || Z_pre!=Z)
+// 			{
+				if(caminar3x3())
+				{
+					lini=QVec::vec3(-X,0,-Z);
+					lfin=QVec::vec3(X,0,Z);
+				}
+// 				X_pre=X;
+// 				Y_pre=Y;
+// 				Z_pre=Z;
+// 			}
 			break;
 		case 4:
 			modo->setText("Rotar");
-			if(rotar())
-				lrot=QVec::vec3(0,0,Y);
+// 			if(Y_pre!=Y)
+// 			{
+				if(rotar())
+					lrot=QVec::vec3(0,0,Y);
+// 				X_pre=X;
+// 				Y_pre=Y;
+// 				Z_pre=Z;
+// 			}
 			break;
 	}
 	for(int i=0;i<6;i++)
@@ -379,18 +417,21 @@ void SpecificWorker::sendData(const TData& data)
 			{
 				angles.q3=(m.value/35537);
 				x=m.value/300;
+				X_pre=X;
 				X=mapear(m.value,-65537,65537, -39,39);
 			}
 			if(m.name=="y")
 			{
 				angles.q2=(m.value/35537);
 				y=m.value/300;
+				Y_pre=Y;
 				Y=mapear(m.value,-65537,65537, 47,-47);
 			}
 			if(m.name=="z")
 			{
 				angles.q1=(m.value/35537);
 				z=m.value/300;
+				Z_pre=Z;
 				Z=mapear(m.value,65537,-65537, -47,47);
 			}
 			if(m.name=="vel")
