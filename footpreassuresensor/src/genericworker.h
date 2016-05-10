@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include <qlog/qlog.h>
 
-#include <ui_mainUI.h>
 
 #include <CommonBehavior.h>
 #include <FootPreassureSensor.h>
@@ -44,11 +43,7 @@ using namespace RoboCompFootPreassureSensor;
 
 
 class GenericWorker : 
-#ifdef USE_QTGUI
-public QWidget, public Ui_guiDlg
-#else
 public QObject
-#endif
 {
 Q_OBJECT
 public:

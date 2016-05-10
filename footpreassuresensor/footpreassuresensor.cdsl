@@ -7,6 +7,5 @@ Component FootPreassureSensor
 		implements FootPreassureSensor;
 	};
 	language Cpp;
-	gui Qt(QWidget);
 };
 
