@@ -64,6 +64,7 @@ public slots:
 
 private:
 	InnerModel *inner;
+	string innerpath;
 	QStringList motores;
 	QString foot,floor,base,nameLeg;
 	double  coxa, femur, tibia;

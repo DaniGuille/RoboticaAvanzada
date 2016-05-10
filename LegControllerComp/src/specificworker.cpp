@@ -44,8 +44,8 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		nameLeg=QString::fromStdString(params[name+".name"].value);
 		base=QString::fromStdString(params[name+".base"].value);
 		floor=QString::fromStdString(params[name+".floor"].value);
-		string s=params[name+".InnerModel"].value;
-		inner = new InnerModel(params[name+".InnerModel"].value);
+		innerpath=params[name+".InnerModel"].value;
+		inner = new InnerModel(innerpath);
 		
 		motores<<QString::fromStdString(params[name+".m1"].value)<<QString::fromStdString(params[name+".m2"].value)<<QString::fromStdString(params[name+".m3"].value);
 		foot=QString::fromStdString(params[name+".foot"].value);
@@ -62,7 +62,7 @@ bool SpecificWorker::setParams(RoboCompCommonBehavior::ParameterList params)
 		tibia=aux.norm2();
 		
 		qDebug()<<"-----------------------------";
-		qDebug()<<"    InnerModel ="<<QString::fromStdString(s);
+		qDebug()<<"    InnerModel ="<<QString::fromStdString(innerpath);
 		qDebug()<<"    coxa   = "<<coxa;
 		qDebug()<<"    femur  = "<<femur;
 		qDebug()<<"    tibia  = "<<tibia;
@@ -189,9 +189,11 @@ bool SpecificWorker::setIKLeg(const PoseLeg &p, const bool &simu)
 bool SpecificWorker::setIKBody(const PoseBody &p, const bool &simu)
 {
 	//inicio rotar el cuerpo
-	inner->updateRotationValues(base, p.rx, p.ry, p.rz,"");
+	InnerModel *inneraux= new InnerModel(innerpath);
+	QVec pos=inneraux->transform(floor, QVec::vec3(p.px,p.py,p.pz), QString::fromStdString(p.ref));
+	inneraux->updateRotationValues(base, p.rx, p.ry, p.rz,"");
 	//fin rotar el cuerpo
-	QVec pos=inner->transform(base,QVec::vec3(p.px,p.py,p.pz),QString::fromStdString(p.ref));
+	pos=inneraux->transform(base, pos, floor);
 	PoseLeg pl;
 	pl.ref = base.toStdString();
 	pl.x = pos.x() + p.x;
