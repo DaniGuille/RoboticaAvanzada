@@ -1,6 +1,6 @@
 # Proxies for required interfaces
-JointMotorProxy = jointmotor:tcp -h localhost -p 20000
-FootPreassureSensorProxy = footpreassuresensor:tcp -h localhost -p 12000
+JointMotorProxy = jointmotor:tcp -h odroid.local -p 20000
+FootPreassureSensorProxy = footpreassuresensor:tcp -h odroid.local -p 12000
 
 
 
